@@ -7,9 +7,15 @@ import Splash from 'screens/splash';
 import {useSelector} from 'react-redux';
 import TabNav from './tabs';
 import EditProfile from 'screens/profile/edit-profile';
-import {Image} from 'react-native';
+import {Image,TouchableOpacity,StyleSheet} from 'react-native';
+import {commonStyle} from 'theme';
 import {Images} from 'theme';
 import SplashScreen from 'react-native-splash-screen';
+import TrainingModule from 'screens/trainingmodule';
+import Certificate from 'screens/certificate';
+import SubmitUnavailability from 'screens/submitunavail';
+import DetailsCard from 'screens/DetailsCard';
+import Team from 'screens/team';
 const Stack = createStackNavigator();
 
 export default function MyStack() {
@@ -55,6 +61,67 @@ export default function MyStack() {
                 ),
               }}
             />
+            <Stack.Screen name='TrainingModule' component={TrainingModule} 
+              options={{
+                headerShown:true,
+                headerStyle: routeStyles.headerStyle,
+                headerTitle: 'Training Module',
+                headerTitleStyle: routeStyles.headerTitleStyle,
+                headerTitleAlign: 'center',
+                headerBackImage: () => (
+                  <Image
+                    source={Images.headerBack}
+                    resizeMode={'contain'}
+                    style={routeStyles.headerBackIconStyle}
+                  />
+                ),
+                }}
+              />
+              <Stack.Screen name='Certificate' component={Certificate} 
+              options={{
+                headerShown:true,
+                headerStyle: routeStyles.headerStyle,
+                headerTitle: 'Certificates',
+                headerTitleStyle: routeStyles.headerTitleStyle,
+                headerTitleAlign: 'center',
+                headerBackImage: () => (
+                  <Image
+                    source={Images.headerBack}
+                    resizeMode={'contain'}
+                    style={routeStyles.headerBackIconStyle}
+                  />
+                ),
+                headerRight: () => (
+                  <TouchableOpacity
+                    style={[commonStyle.screenPadding]}
+                    onPress={() => navigation.navigate('editProfile')}>
+                    <Image
+                      source={require('../assets/images/upload.png')}
+                      resizeMode={'contain'}
+                      style={styles.profileEditIcon}
+                    />
+                  </TouchableOpacity>
+                ),
+                }}/>
+
+              <Stack.Screen name='Team' component={Team} 
+              options={{
+                headerShown:true,
+                headerStyle: routeStyles.headerStyle,
+                headerTitle: 'Team Schedule',
+                headerTitleStyle: routeStyles.headerTitleStyle,
+                headerTitleAlign: 'center',
+              }}
+              />
+              <Stack.Screen name='SubmitUnavailability' component={SubmitUnavailability} 
+              options={{
+                headerShown:true,
+                headerStyle: routeStyles.headerStyle,
+                headerTitle: 'Submit Unavailability',
+                headerTitleStyle: routeStyles.headerTitleStyle,
+                headerTitleAlign: 'center',
+              }}
+              />
           </>
         ) : (
           <Stack.Screen
@@ -67,3 +134,10 @@ export default function MyStack() {
     </NavigationContainer>
   );
 }
+
+const styles=StyleSheet.create({
+  profileEditIcon: {
+    width: 24,
+    height: 24,
+  },
+})

@@ -7,15 +7,15 @@ import {getUserDetail} from 'services/auth';
 import {commonStyle, Images} from 'theme';
 import colors from 'theme/colors';
 
-function GuardHome() {
+function GuardHome({navigation}) {
   const listData = [
-    {title: 'Team Schedule'},
-    {title: 'Submit Unavailability'},
+    {title: 'Team Schedule',id:3},
+    {title: 'Submit Unavailability',id:4},
     {title: 'Incident/Forms'},
     {title: 'Team Message'},
     {title: 'Electronic Sign on Register'},
-    {title: 'Training Module'},
-    {title: 'Certificate'},
+    {title: 'Training Module',id:2},
+    {title: 'Certificate',id:1},
     {title: 'Logout', id: 0},
   ];
   const dispatch = useDispatch();
@@ -24,6 +24,37 @@ function GuardHome() {
     switch (item?.id) {
       case 0:
         handleLogout();
+        break;
+
+      case 1:
+          navigation.navigate('Certificate');
+          break;
+
+      case 2:
+        navigation.navigate('TrainingModule');
+        break;
+
+      case 3:
+        navigation.navigate('Team',{
+          venue:'Charter Hall-CH VIC(Geelong)',
+          time1:'08:00-15:30',
+          name1:'Harley Hunter',
+          icon1:'',
+          time2:'15:30-23:10',
+          name2:'Abdul Waheed',
+          icon2:''
+        });
+        break;
+
+      case 4:
+        navigation.navigate('SubmitUnavailability',{
+          description:'draft/For Approval',
+          radio_props_draft:[
+              {label: 'Unavailable', value: 0 },
+              {label: 'Partly Unavailable', value: 1 }
+            ],
+          radioAction:0,
+        });
         break;
 
       default:

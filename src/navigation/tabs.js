@@ -17,7 +17,7 @@ import Schedule from 'screens/schedule';
 import TimeSheet from 'screens/timesheet';
 import Remiders from 'screens/reminders';
 import Licences from 'screens/licences';
-
+// import TopTab from 'screens/toptabnav';
 const Tab = createBottomTabNavigator();
 
 const TabNav = () => {
@@ -90,7 +90,7 @@ const TabNav = () => {
             headerTitleAlign: 'center',
           }}
           name="Contact"
-          component={Licences}
+          component={Licences} //Licences
         />
 
         <Tab.Screen
