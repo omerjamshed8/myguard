@@ -17,6 +17,7 @@ import Schedule from 'screens/schedule';
 import TimeSheet from 'screens/timesheet';
 import Remiders from 'screens/reminders';
 import Licences from 'screens/licences';
+import IncidentForm from 'screens/incidentform';
 // import TopTab from 'screens/toptabnav';
 const Tab = createBottomTabNavigator();
 
@@ -90,7 +91,7 @@ const TabNav = () => {
             headerTitleAlign: 'center',
           }}
           name="Contact"
-          component={Licences} //Licences
+          component={IncidentForm} //Licences
         />
 
         <Tab.Screen

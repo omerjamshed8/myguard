@@ -11,7 +11,7 @@ function GuardHome({navigation}) {
   const listData = [
     {title: 'Team Schedule',id:3},
     {title: 'Submit Unavailability',id:4},
-    {title: 'Incident/Forms'},
+    {title: 'Incident/Forms',id:5},
     {title: 'Team Message'},
     {title: 'Electronic Sign on Register'},
     {title: 'Training Module',id:2},
@@ -54,6 +54,13 @@ function GuardHome({navigation}) {
               {label: 'Partly Unavailable', value: 1 }
             ],
           radioAction:0,
+        });
+        break;
+
+      case 5:
+        navigation.navigate('Toptab',{
+          screen1:'ForgotPassword',
+          screen2:'Profile',
         });
         break;
 

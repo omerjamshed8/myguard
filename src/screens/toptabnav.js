@@ -65,20 +65,21 @@ import React from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import Reports from './reports';
 
 const Tab = createMaterialTopTabNavigator();
 
 const Home = () => {
   return (
     <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-      <Text>Home</Text>
+      <Text style={{color:'black'}}>Home</Text>
     </View>
   );
 };
 const Setting = () => {
   return (
     <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-      <Text>Setting</Text>
+      <Text style={{color:'black'}}>Setting</Text>
     </View>
   );
 };
@@ -90,8 +91,10 @@ const About = () => {
   );
 };
 const TopTab = ({screen1,screen2}) => {
+  screen1='My Reports';
+  screen2='Site Reports';
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       <Tab.Navigator
 
         tabBar={({state, descriptors, navigation, position}) => {
@@ -146,7 +149,7 @@ const TopTab = ({screen1,screen2}) => {
             </View>
           );
         }}>
-          {screen1 && <Tab.Screen name={screen1} component={Home} />}
+          {screen1 && <Tab.Screen name={screen1} component={Reports} />}
         {screen2 && <Tab.Screen name={screen2} component={Setting} />}
       </Tab.Navigator>
     </NavigationContainer>

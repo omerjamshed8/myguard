@@ -16,6 +16,8 @@ import Certificate from 'screens/certificate';
 import SubmitUnavailability from 'screens/submitunavail';
 import DetailsCard from 'screens/DetailsCard';
 import Team from 'screens/team';
+import Tabnav from 'screens/tabnav';
+import IncidentForm from 'screens/incidentform';
 const Stack = createStackNavigator();
 
 export default function MyStack() {
@@ -27,8 +29,12 @@ export default function MyStack() {
     }, 2000);
   }, []);
 
+  const presshandler=()=>{
+    navigation.navigate('IncidentForm')
+  }
+
   return (
-    <NavigationContainer>
+    <NavigationContainer independent={true}>
       <Stack.Navigator>
         {/* <Stack.Screen
           name="Splash"
@@ -42,6 +48,34 @@ export default function MyStack() {
               name="AppNav"
               component={TabNav}
               options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Toptab"
+              component={Tabnav}
+              options={{
+                headerShown: true,
+                headerStyle: routeStyles.headerStyle,
+                headerTitle: 'Incident/Forms',
+                headerTitleStyle: routeStyles.headerTitleStyle,
+                headerTitleAlign: 'center',
+                headerBackImage: () => (
+                  <Image
+                    source={Images.headerBack}
+                    resizeMode={'contain'}
+                    style={routeStyles.headerBackIconStyle}
+                  />
+                ),
+                headerRight: () => (
+                  <TouchableOpacity
+                    style={[commonStyle.screenPadding]}>
+                    <Image
+                      source={require('../assets/images/plusbtn.png')}
+                      resizeMode={'contain'}
+                      style={styles.profileEditIcon}
+                    />
+                  </TouchableOpacity>
+                ),
+              }}
             />
             <Stack.Screen
               name="editProfile"
@@ -122,6 +156,7 @@ export default function MyStack() {
                 headerTitleAlign: 'center',
               }}
               />
+              <Stack.Screen name='IncidentForm' component={IncidentForm}/>
           </>
         ) : (
           <Stack.Screen
