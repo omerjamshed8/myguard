@@ -1,5 +1,6 @@
 import React from "react";
 import { View,Text,StyleSheet,TouchableOpacity, SafeAreaView, ScrollView } from "react-native";
+import fonts from "assets1/assets/fonts/fonts";
 
 export default function Certificate(){
 
@@ -7,10 +8,10 @@ export default function Certificate(){
         return(
             <View style={{height:130,width:"97%",position:'relative',borderWidth:1.5,borderRadius:10,marginTop:"5%",justifyContent:'center'}}>
                 <View style={{flexDirection:"row"}}>
-                    <Text style={{color:'black',textAlign:'center',textAlignVertical:"center",width:"35%"}}>
+                    <Text style={{color:'#2A2D43',textAlign:'center',textAlignVertical:"center",width:"35%",fontFamily:fonts.regular,fontWeight:'400'}}>
                         Hello World
                     </Text>
-                    <Text style={{color:'black',textAlign:'center',textAlignVertical:"center",width:"35%",fontWeight:'bold'}}>
+                    <Text style={{color:'#2A2D43',textAlign:'center',textAlignVertical:"center",width:"35%",fontFamily:fonts.regular,fontWeight:'800'}}>
                         August 17,2021
                     </Text>
                     <View style={{flexDirection:'column'}}>

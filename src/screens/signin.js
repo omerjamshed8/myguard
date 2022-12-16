@@ -44,21 +44,19 @@ function SignIn({navigation}) {
     if (validator.isEmpty(password)) {
       return showError('The Password is required.');
     }
-
-    try {
       setIsLoading(true);
-      const response = await login({
+      await login({
         email,
         password,
-      });
-      setIsLoading(false);
-      console.log('response>>>>', response);
-      dispatch(setUserInfo(response));
-      // navigation.navigate('SelectAccount');
-    } catch (error) {
+      }).then((res)=>{
+          setIsLoading(false);
+          console.log('response>>>>', res);
+          dispatch(setUserInfo(res));
+          navigation.navigate('AppNav');
+      }).catch ((error) =>{
       setIsLoading(false);
       showError(error?.response?.data?.message || 'Server Error');
-    }
+    })
   };
 
   const clickhandlersignup = () => {

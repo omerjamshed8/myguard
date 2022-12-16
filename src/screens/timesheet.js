@@ -1,6 +1,8 @@
 import React from "react";
 import { Text,View,StyleSheet,TouchableOpacity, ScrollView } from "react-native";
 import Cards from "./card";
+import IncidentCard from "./cardcomponent/incidentcard";
+import Document from "./Licences/documents";
 
 export default function TimeSheet(){
 
@@ -16,9 +18,11 @@ export default function TimeSheet(){
             <ScrollView>
                 <Cards/>
                 <Cards/>
+                <IncidentCard/>
                 <Cards/>
                 <Cards/>
                 <Cards/>
+                <Document/>
             </ScrollView>
         </View>
     )

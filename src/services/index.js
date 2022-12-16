@@ -1,10 +1,12 @@
 import axios from 'axios';
+import { useState } from 'react';
 import store from 'store';
 import {showErrorMessage} from './auth';
 
 const checkStatus = status => status >= 200 && status < 300;
 
-export const apiRootLive = 'http://54.171.172.119:3001';
+export const apiRootLive = 'http://54.171.172.119:3001';//{{BASE_URL}}/api/v1/employee/profile/135
+//http://54.171.172.119:3001
 
 const client = axios.create({
   baseURL: apiRootLive,

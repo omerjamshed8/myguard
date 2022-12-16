@@ -27,10 +27,10 @@ export default function Cards(){
                 </Text>
                 </Text>
                 <View style={{flexDirection:'column',marginLeft:50}}>
-                    <TouchableOpacity style={[styles.appButtonContainerLarge,{borderColor:'#F2385F'}]} onPress={clickhandler}>
+                    <TouchableOpacity style={[styles.appButtonContainerLarge,{borderColor:'#F2385F',borderBottomRightRadius:0,borderBottomLeftRadius:0}]} onPress={clickhandler}>
                             <Text style={styles.appButtonTextLarge}>Approve</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.appButtonContainerLarge,{borderColor:'#F2385F'}]} onPress={clickhandler}>
+                    <TouchableOpacity style={[styles.appButtonContainerLarge,{borderColor:'#F2385F',borderTopRightRadius:0,borderTopLeftRadius:0}]} onPress={clickhandler}>
                             <Text style={styles.appButtonTextLarge}>Decline</Text>
                     </TouchableOpacity>
                 </View>

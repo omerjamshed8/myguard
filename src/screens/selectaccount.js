@@ -16,18 +16,16 @@ function SelectAccount({navigation}) {
   const {registerData} = useSelector(state => state.auth);
 
   const onUpdateRole = async role => {
-    try {
-      const response = await updateUserRole(role, {
+      await updateUserRole(role, {
         Authorization: `Bearer ${registerData?.accessToken}`,
-      });
-
-      navigation.navigate('CreateGuard', {
-        type: role == 2 ? 'guard' : 'employee',
-        role,
-      });
-    } catch (error) {
+      }).then((res)=>{
+        navigation.navigate('CreateGuard', {
+          type: role == 2 ? 'guard' : 'employee',
+          role,
+        });
+      }).catch ((error)=> {
       console.log('eer', error, error.response);
-    }
+    })
   };
 
   return (

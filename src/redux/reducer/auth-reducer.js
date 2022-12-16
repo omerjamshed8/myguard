@@ -9,8 +9,10 @@ const authSlice = createSlice({
   },
   reducers: {
     setUserInfo: (state, action) => {
-      state.accessToken = action?.payload?.accessToken ?? null;
-      state.user = action?.payload?.user ?? null;
+      console.log(action, "actionPPPPP")
+      state.accessToken = action?.payload?.data?.accessToken ?? null;
+      state.user = action?.payload?.data?.user ?? null;
+      // return state;
     },
 
     setRegisterData: (state, action) => {

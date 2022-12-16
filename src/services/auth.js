@@ -5,8 +5,12 @@ import {client} from 'services';
 import store from 'store';
 import {showError} from 'utils/toast';
 
-export const login = payload =>
-  client.post('/api/v1/auth/login', payload).then(res => res.data);
+export const login = payload =>{
+  console.log("!!!!!!!!!!!!!!!!!!!!!!",payload);
+  return new Promise((resolve, reject) => {
+    client.post('/api/v1/auth/login', payload).then(res => resolve(res)).catch((err)=> reject(err))
+  })
+}
 
 export const register = payload =>
   client.post('/api/v1/auth/register', payload).then(res => res.data);
@@ -18,9 +22,11 @@ export const resetPassword = payload =>
   client.post('/api/v1/auth/resetPassword', payload).then(res => res.data);
 
 export const updateUserRole = (userRoleId, header = {}) => {
-  return client
-    .post('/api/v1/user/updateUserRole', {userRoleId}, {headers: header})
-    .then(res => res.data);
+  return new Promise((resolve, reject) => {
+    client
+      .post('/api/v1/user/updateUserRole', {userRoleId}, {headers: header})
+      .then(res => resolve(res.data)).catch((err)=>reject(err));
+  })
 };
 
 export const updateEmployeeProfile = (payload, header = {}) => {

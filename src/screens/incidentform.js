@@ -8,8 +8,12 @@ import {
   SafeAreaView,
   ScrollView,
   Image,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import {Colors, Fonts, Images} from 'theme';
+import Dropdowns from './view-profile/dropdownpicker';
+import ImageUploadd from './imageuploader';
 
 function IncidentForm({navigation}) {
   const [text, onChangeText] = React.useState('Full Name');
@@ -31,36 +35,40 @@ function IncidentForm({navigation}) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}>
 
-            <View style={{justifyContent:'center',alignItems:'center'}}>
+            {/* <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
-            </View>
+            </View> */}
         {/* Input Wrapper */}
-        <View style={{flex: 1, padding: 25}}>
-
+        <View style={{flex: 1, paddingHorizontal: 30,marginTop:"20%"}}>
           <View>
             <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Customer Name</Text>
-            <CustomInput
+            <Dropdowns/>
+            {/* <CustomInput
               value={names}
               placeholder="Name"
               onChangeText={onChangeName}
               placeholderTextColor={'black'}
-            />
+            /> */}
 
-            <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Entry</Text>
-            <CustomInput
+            <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Select Site</Text>
+            <View>
+              <Dropdowns/>
+            </View>
+            {/* <CustomInput
               value={entry}
-              placeholder="Entry"
+              placeholder="Select Site"  //pehlay yahan Entry tha 
               onChangeText={onChangeentry}
               placeholderTextColor={'black'}
-            />
+              inputType={'description'}
+            /> */}
 
-            <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Submitted By</Text>
+            {/* <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Submitted By</Text>
             <CustomInput
               value={submission}
               placeholder="Name"
               onChangeText={onChangeSubmission}
               placeholderTextColor={'black'}
-            />
+            /> */}
 
             <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Form Name</Text>
             <CustomInput
@@ -78,35 +86,55 @@ function IncidentForm({navigation}) {
               placeholderTextColor={'black'}
             />
             
-            <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Required Action</Text>
+            {/* <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Required Action</Text>
             <CustomInput
               value={reqAction}
               placeholder="Name"
               onChangeText={onChangereqAction}
               placeholderTextColor={'black'}
-            />
+            /> */}
 
             <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Description</Text>
-            <CustomInput
+            {/* <CustomInput
               value={desc}
-              placeholder="Name"
+              placeholder="Type here..."
               onChangeText={onChangedesc}
               placeholderTextColor={'black'}
               inputType={'multiline'}
+            /> */}
+            <TextInput
+            style={styles.inputs}
+            placeholder="Type here..."
+            onChangeText={onChangedesc}
+            placeholderTextColor={'black'}
+            multiline={true}
+            numberOfLines={4}
             />
           </View>
 
         </View>
 
-        <View style={{justifyContent:'center',alignItems:'center',margin:10}}>
-            <Image source={require('../assets/images/upload.png')} style={{height: 50, width: 50}}/>
-        </View>
-
         <View>
+          <ImageUploadd/>
+        </View>
+        
+        {/* <View style={{flexDirection:'row',justifyContent:'center'}}>
+          <View style={{justifyContent:'center',alignItems:'center',margin:10,borderColor:'black',borderRadius:2}}>
+              <TouchableOpacity><Image source={require('../assets/images/uploadmedia.png')} style={{height: 100, width: 130}}/></TouchableOpacity>
+          </View>
+          <View style={{justifyContent:'center',alignItems:'center',margin:10,borderColor:'black',borderRadius:2}}>
+              <TouchableOpacity><Image source={require('../assets/images/icon69.png')} style={{height: 100, width: 130}}/></TouchableOpacity>
+          </View>
+        </View> */}
+
+        {/* <View>
           <CustomButton
             buttonWrapper={styles.profileButton}
             title={'Add Incident'}
           />
+          </View> */}
+          <View>
+            <Text>{'\n'}</Text>
           </View>
       </ScrollView>
     </SafeAreaView>
@@ -136,6 +164,17 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     color: 'black',
     margin: 10,
+  },
+  inputs:{
+    marginTop: 5,
+    borderColor: Colors.twoATwoD,
+    borderWidth: 2,
+    borderRadius: 10,
+    padding: 7,
+    paddingHorizontal: 16,
+    color: Colors.twoATwoD,
+    fontFamily: Fonts.Poppins.Regular,
+    fontSize: 14,
   },
   splashTextInput: {
     fontSize: 15,
@@ -198,7 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   profileButton: {
-    width: '92%',
+    width: '85%',
   },
   skipText: {
     alignSelf: 'center',

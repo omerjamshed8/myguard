@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "229525063361",
+    "project_id": "security-links-18e46",
+    "storage_bucket": "security-links-18e46.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:229525063361:android:57c3fcbb2fff3bc3eb7640",
+        "android_client_info": {
+          "package_name": "com.guardhouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "229525063361-bvobq3hpcs7fpkkiipb2crqq7rdl8o1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgSTTN3C9Y7dbteRthQVtVxnwfuPep7oo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "229525063361-bvobq3hpcs7fpkkiipb2crqq7rdl8o1k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

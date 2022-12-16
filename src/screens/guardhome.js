@@ -1,21 +1,40 @@
 import CustomButton from 'components/custom-button';
-import React, {useEffect} from 'react';
-import {View, SafeAreaView, StyleSheet, Image, FlatList} from 'react-native';
-import {useDispatch} from 'react-redux';
-import {onLogout} from 'redux/reducer/auth-reducer';
-import {getUserDetail} from 'services/auth';
-import {commonStyle, Images} from 'theme';
+import React, { useEffect, useState } from 'react';
+import { View, SafeAreaView, StyleSheet, Image, FlatList, Text } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { onLogout } from 'redux/reducer/auth-reducer';
+import { getUserDetail } from 'services/auth';
+import { commonStyle, Images } from 'theme';
 import colors from 'theme/colors';
+import axios from 'axios';
+import GetTime from './getcurrenttime/time';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
+import { compose } from 'redux';
+import { result } from 'lodash';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+// import QRCodeScanner from 'react-native-qrcode-scanner';
 
-function GuardHome({navigation}) {
+function GuardHome({ navigation }) {
+  const [clockin, setclockin] = useState('Clock in')
+  const [scan, setscan] = useState(false);
+  const [result, setresult] = useState()
+
+  var hours = new Date().getHours(); //To get the Current Hours
+  var min = new Date().getMinutes(); //To get the Current Minutes
+  var sec = new Date().getSeconds(); //To get the Current Seconds
+
+
+  const [state, setState] = useState({});
+
   const listData = [
-    {title: 'Team Schedule',id:3},
-    {title: 'Submit Unavailability',id:4},
-    {title: 'Incident/Forms',id:5},
-    {title: 'Team Message'},
-    {title: 'Electronic Sign on Register'},
-    {title: 'Training Module',id:2},
-    {title: 'Certificate',id:1},
+    // {title: 'Team Schedule',id:3},
+    { title: 'Submit Unavailability', id: 4 },
+    { title: 'Incident/Forms', id: 5 },
+    // {title: 'Team Message'},
+    // {title: 'Electronic Sign on Register',id:6},
+    { title: 'Training Module', id: 2 },
+    // {title: 'Certificate',id:1},
+    { title: 'Staff Profile', id: 7 },
     {title: 'Logout', id: 0},
   ];
   const dispatch = useDispatch();
@@ -27,41 +46,49 @@ function GuardHome({navigation}) {
         break;
 
       case 1:
-          navigation.navigate('Certificate');
-          break;
+        navigation.navigate('Certificate');
+        break;
 
       case 2:
         navigation.navigate('TrainingModule');
         break;
 
       case 3:
-        navigation.navigate('Team',{
-          venue:'Charter Hall-CH VIC(Geelong)',
-          time1:'08:00-15:30',
-          name1:'Harley Hunter',
-          icon1:'',
-          time2:'15:30-23:10',
-          name2:'Abdul Waheed',
-          icon2:''
+        navigation.navigate('Team', {
+          venue: 'Charter Hall-CH VIC(Geelong)',
+          time1: '08:00-15:30',
+          name1: 'Harley Hunter',
+          icon1: '',
+          time2: '15:30-23:10',
+          name2: 'Abdul Waheed',
+          icon2: ''
         });
         break;
 
       case 4:
-        navigation.navigate('SubmitUnavailability',{
-          description:'draft/For Approval',
-          radio_props_draft:[
-              {label: 'Unavailable', value: 0 },
-              {label: 'Partly Unavailable', value: 1 }
-            ],
-          radioAction:0,
+        navigation.navigate('SubmitUnavailability', {
+          description: 'draft/For Approval',
+          radio_props_draft: [
+            { label: 'Unavailable', value: 0 },
+            { label: 'Partly Unavailable', value: 1 }
+          ],
+          radioAction: 0,
         });
         break;
 
       case 5:
-        navigation.navigate('Toptab',{
-          screen1:'ForgotPassword',
-          screen2:'Profile',
+        navigation.navigate('Toptab', {
+          screen1: 'ForgotPassword',
+          screen2: 'Profile',
         });
+        break;
+
+      case 6:
+        navigation.navigate('ElectronicSignOnRegister');
+        break;
+
+      case 7:
+        navigation.navigate('ViewProfile')
         break;
 
       default:
@@ -76,6 +103,16 @@ function GuardHome({navigation}) {
   const handleLogout = () => {
     dispatch(onLogout());
   };
+
+  onSuccess = (e) => {
+    setresult(e.data);
+    setscan(false)
+  }
+
+  startScan = () => {
+    setscan(true)
+    setresult()
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -108,22 +145,48 @@ function GuardHome({navigation}) {
           <CustomButton
             buttonWrapper={styles.clockInContainer}
             titleStyle={styles.clockInText}
-            title={'Clock in'}
+            title={clockin}
+            onButtonPress={(event) => {
+              if (clockin == 'Clock in') {
+                setclockin("Clock out")
+                console.log(hours + ":" + min + ":" + sec)
+              } else if (clockin == 'Clock out') {
+                setclockin('Clock in')
+              }
+            }}
           />
           <CustomButton
             buttonWrapper={styles.clockInContainer}
             titleStyle={styles.clockInText}
             title={'Scan QR'}
-          />
+            onButtonPress={() => {
+              const hamza = axios.get('http://54.171.172.119:3001/api/v1/employee/profile/135').then((res) => setState(res))
+              console.log(state)
+              // return  <QRCodeScanner
+              //     reactivate={true}
+              //     showMarker={true}
+              //     ref={(node)=>{this.scanner=node}}
+              //     onRead={this.onSuccess}
+              //     topContent={
+              //       <Text>Scan your QR code</Text>
+              //     }
+              //     bottomContent={
+              //       <CustomButton
+              //         title={'OK'}
+              //         />
+              //       }
+              //     />
+            }}
+            />
         </View>
       </View>
 
       <FlatList
         data={listData}
         style={commonStyle.screenPadding}
-        contentContainerStyle={{paddingVertical: 20}}
-        renderItem={({item}) => (
-          <View style={{marginVertical: 8}}>
+        contentContainerStyle={{ paddingVertical: 20 }}
+        renderItem={({ item }) => (
+          <View style={{ marginVertical: 8 }}>
             <CustomButton
               title={item.title}
               onButtonPress={() => clickhandler(item)}

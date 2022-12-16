@@ -79,7 +79,7 @@ const Home = () => {
 const Setting = () => {
   return (
     <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-      <Text style={{color:'black'}}>Setting</Text>
+      <Text style={{color:'black'}}>Settings</Text>
     </View>
   );
 };

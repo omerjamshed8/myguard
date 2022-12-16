@@ -5,6 +5,7 @@ const DetailsCard = (prop) => {
     console.log("DetailsCard= ",prop.props);
     var props=prop.props;
     return (
+        <View style={{flex:1}}>
         <View style={styles.maincontainer}>
             <View style={styles.head}>
 
@@ -30,6 +31,7 @@ const DetailsCard = (prop) => {
                 </View>
             </View>
             <View style={{ width: '100%', height: 1, backgroundColor: "#E2E8F0" }} />
+        </View>
         </View>
     )
 }

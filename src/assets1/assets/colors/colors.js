@@ -1,0 +1,26 @@
+const colors = {
+  white: '#ffffff',
+  black: '#000000',
+  splash: '#F0E186',
+  yellow:"#FFDE82",
+  btnColor: '#57429D',
+  red:'#F2385F',
+  lightRed:'#FEECED',
+  dividerColor:'#D9D2D3',
+  headingBlack: '#27232C',
+  subHeading: '#5E5E5F',
+  secondary:"#FFFFFF",
+  borderColor:'#F0EEEB',
+  grey:"#959398",
+  lightGrey:'#F4F3F0',
+  green:'#44AC99',
+  lightGreen:'#34C759',
+  blue:'#007AFF',
+  profileBgColor:'#BAB9BB',
+  tabIconColor:"#848286",
+  switchBg:"#787880",
+  SecondaryTxt: '#848286',
+  checkBoxColor:'#CCCCCC',
+};
+
+export default colors;

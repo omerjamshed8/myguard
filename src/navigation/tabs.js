@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
+  Text
 } from 'react-native';
 import {Colors, commonStyle, Fonts, Images} from 'theme';
 import GuardHome from 'screens/guardhome';
@@ -18,6 +19,14 @@ import TimeSheet from 'screens/timesheet';
 import Remiders from 'screens/reminders';
 import Licences from 'screens/licences';
 import IncidentForm from 'screens/incidentform';
+import DatePickerComponent from 'screens/electronicsign';
+import ElectronicSignOnRegister from 'screens/electronicsign';
+import TeamMessage from 'screens/teammsg';
+import EditProfile from 'screens/view-profile/profile';
+import EmergencyDetails from 'screens/view-profile/emergencydetails';
+import BankingDetails from 'screens/view-profile/bankingdetails';
+import ProfileTabNav from 'screens/view-profile/tab-nav';
+import Document from 'screens/Licences/documents';
 // import TopTab from 'screens/toptabnav';
 const Tab = createBottomTabNavigator();
 
@@ -83,15 +92,28 @@ const TabNav = () => {
           component={Remiders}
         />
         <Tab.Screen
-          options={{
+          options={({route, navigation}) => {
+            return {
             headerShown: true,
             headerStyle: routeStyles.headerStyle,
             headerTitle: 'Security Licences',
             headerTitleStyle: routeStyles.headerTitleStyle,
             headerTitleAlign: 'center',
-          }}
+            headerRight: () => (
+              <TouchableOpacity
+                style={[commonStyle.screenPadding]}
+                onPress={() => {
+                  navigation.navigate('addDocument')}}>
+                <Image
+                   source={require('../assets/images/plusbtn.png')}
+                  resizeMode={'contain'}
+                  style={styles.profileEditIcon}
+                />
+              </TouchableOpacity>
+            ),
+          }}}
           name="Contact"
-          component={IncidentForm} //Licences
+          component={Document} //IncidentForm //Licences
         />
 
         <Tab.Screen
@@ -105,12 +127,14 @@ const TabNav = () => {
               headerRight: () => (
                 <TouchableOpacity
                   style={[commonStyle.screenPadding]}
-                  onPress={() => navigation.navigate('editProfile')}>
-                  <Image
+                  onPress={() => {
+                    navigation.navigate('editProfile')}}>
+                  <Text style={{color:'white',fontSize:18,fontWeight:'600'}}>Edit</Text>
+                  {/* <Image
                     source={images.profileEdit}
                     resizeMode={'contain'}
                     style={styles.profileEditIcon}
-                  />
+                  /> */}
                 </TouchableOpacity>
               ),
               tabBarIcon: ({focused}) => {
@@ -124,7 +148,7 @@ const TabNav = () => {
             };
           }}
           name="Profile"
-          component={ProfileDetail}
+          component={ProfileDetail}  //EditProfile lagana hai ab // pehlay yeh thii ProfileDetail
         />
       </Tab.Navigator>
     </View>
