@@ -1,6 +1,6 @@
 import CustomButton from 'components/custom-button';
 import React, { useEffect, useState } from 'react';
-import { View, SafeAreaView, StyleSheet, Image, FlatList, Text } from 'react-native';
+import { View, SafeAreaView, StyleSheet, Image, FlatList, Text, Modal } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { onLogout } from 'redux/reducer/auth-reducer';
 import { getUserDetail } from 'services/auth';
@@ -12,16 +12,20 @@ import GetTime from './getcurrenttime/time';
 import { compose } from 'redux';
 import { result } from 'lodash';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import QRScanner from './QRcodeScanner/qrscanner';
 // import QRCodeScanner from 'react-native-qrcode-scanner';
 
 function GuardHome({ navigation }) {
   const [clockin, setclockin] = useState('Clock in')
   const [scan, setscan] = useState(false);
   const [result, setresult] = useState()
+  const [modalVisible, setModalVisible] = useState(true);
 
   var hours = new Date().getHours(); //To get the Current Hours
   var min = new Date().getMinutes(); //To get the Current Minutes
   var sec = new Date().getSeconds(); //To get the Current Seconds
+
+  const [time,setTime]=useState()
 
 
   const [state, setState] = useState({});
@@ -39,6 +43,8 @@ function GuardHome({ navigation }) {
   ];
   const dispatch = useDispatch();
 
+  const [qrVisible, setQrVisible] = useState(false)
+
   const clickhandler = item => {
     switch (item?.id) {
       case 0:
@@ -50,7 +56,7 @@ function GuardHome({ navigation }) {
         break;
 
       case 2:
-        navigation.navigate('TrainingModule');
+        // navigation.navigate('TrainingModule');
         break;
 
       case 3:
@@ -116,6 +122,9 @@ function GuardHome({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      {
+        
+      }
       <View
         style={{
           backgroundColor: colors.twoATwoD,
@@ -149,9 +158,36 @@ function GuardHome({ navigation }) {
             onButtonPress={(event) => {
               if (clockin == 'Clock in') {
                 setclockin("Clock out")
+                setTime(hours + ":" + min + ":" + sec);
+                console.log("settime",time)
                 console.log(hours + ":" + min + ":" + sec)
+                axios.post(
+                  "https://securitylinksapi.herokuapp.com/api/v1/employee/13/checkin",
+                  {
+                    checkinTime:time,    
+                  }
+              ).then(res => {
+                  console.log('successfully clocked in')
+                  console.log(res)
+              }).catch(e => {
+                  console.log('error')
+                  console.log(e.response.data)
+              }) 
               } else if (clockin == 'Clock out') {
                 setclockin('Clock in')
+                setTime(hours + ":" + min + ":" + sec)
+                axios.post(
+                  "https://securitylinksapi.herokuapp.com/api/v1/employee/13/checkin",
+                  {
+                    checkinTime:time,    
+                  }
+              ).then(res => {
+                  console.log('successfully clocked out')
+                  console.log(res)
+              }).catch(e => {
+                  console.log('error')
+                  console.log(e.response.data)
+              }) 
               }
             }}
           />
@@ -162,24 +198,21 @@ function GuardHome({ navigation }) {
             onButtonPress={() => {
               const hamza = axios.get('http://54.171.172.119:3001/api/v1/employee/profile/135').then((res) => setState(res))
               console.log(state)
-              // return  <QRCodeScanner
-              //     reactivate={true}
-              //     showMarker={true}
-              //     ref={(node)=>{this.scanner=node}}
-              //     onRead={this.onSuccess}
-              //     topContent={
-              //       <Text>Scan your QR code</Text>
-              //     }
-              //     bottomContent={
-              //       <CustomButton
-              //         title={'OK'}
-              //         />
-              //       }
-              //     />
+             setQrVisible(true)
             }}
             />
         </View>
       </View>
+
+      {
+        qrVisible
+        ?
+        <Modal visible={true} onRequestClose={()=>{setModalVisible(false);setQrVisible(false)}}>
+          <QRScanner/>
+        </Modal>
+        :
+        null
+      }
 
       <FlatList
         data={listData}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomButton from 'components/custom-button';
 import CustomInput from 'components/custom-input';
 import Screen from 'components/screen';
@@ -10,6 +10,7 @@ import {
     Image,
     ScrollView,
     TouchableOpacity,
+    TextInput,
     Keyboard,
 } from 'react-native';
 import colors from 'theme/colors';
@@ -21,11 +22,12 @@ import { showError, showSuccess } from 'utils/toast';
 import validator from 'validator';
 import ResetSuccess from 'components/reset-success';
 import _ from 'lodash';
+import axios from 'axios';
 
 const BankingDetails = ({ navigation }) => {
-    const {  user } = useUser();
-    const [bankname,setbankname]=useState(user?.UserProfile?.bankname);
-    const [accountname, onChangeaccountname] = React.useState(user?.UserProfile?.accountname || '');
+    const { user } = useUser();
+    const [bankname, setbankname] = useState(user?.UserProfile?.bankname);
+    const [accountname, onChangeaccountname] = React.useState();
     const [BSB, onChangeBSB] = React.useState(
         user?.UserProfile?.BSB || '',
     );
@@ -33,9 +35,9 @@ const BankingDetails = ({ navigation }) => {
     const [state, onChangestate] = React.useState(
         user?.UserProfile?.state || '',
     );
-      const [postalcode, onChangePostalcode] = React.useState(
+    const [postalcode, onChangePostalcode] = React.useState(
         user?.UserProfile?.postalCode || '',
-      );
+    );
     // const [dob, onChangeDob] = React.useState(
     //     user?.UserProfile?.dateOfBirth || '',
     // );
@@ -46,14 +48,33 @@ const BankingDetails = ({ navigation }) => {
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
+    const [responses,setresponses]=useState()
 
     const onClosePicker = () => setPicker(false);
 
+    useEffect(() => {
+        axios.get(
+            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
+        ).then(res => {
+            console.log('successfully get response in bankingdetailsjs of bankingdetails.js')
+            console.log("!!!!!!!!!>>>>!!!!!!!!>>>>>", res?.data?.employee?.EmployeeHrDetail?.bankName)
+            setresponses(res?.data?.employee)
+            setbankname(res?.data?.employee?.EmployeeHrDetail?.bankName)
+            onChangeaccountname(res?.data?.employee?.EmployeeHrDetail?.accountName)
+            console.log("EmployeeHrDetails*******",res?.data?.employee?.EmployeeHrDetail?.Location);
+            onChangeBSB(res?.data?.employee?.EmployeeHrDetail?.bsb)
+            onChangeaccountnumber(res?.data?.employee?.EmployeeHrDetail?.accountNumber)
+        }).catch(e => {
+            console.log('error fetching data from profile api')
+            console.log(e.response.data)
+        })
+    }, [])
+
     const onSave = async () => {
         Keyboard.dismiss();
-        if (validator.isEmpty(Fullname)) {
-            return showError('The full name is required');
-        }
+        // if (validator.isEmpty(Fullname)) {
+        //     return showError('The full name is required');
+        // }
         // else if (validator.isEmpty(accountname)) {
         //   return showError('The accountname number is required');
         // } else if (validator.isEmpty(address)) {
@@ -68,91 +89,84 @@ const BankingDetails = ({ navigation }) => {
         //   return showError('The date of birth is required');
         // }
 
-        let payload = {
-            BSB,
-            accountnumber,
-            state,
-            postalCode: postalcode,
-            dateOfBirth: dob ? new Date(dob).toISOString() : '',
-            countryCode: '+92',
-            fullName: Fullname,
-            accountname,
-        };
-        setLoading(true);
-        try {
-            const response = await updateProfile(payload);
+        // let payload = {
+        //     BSB,
+        //     accountnumber,
+        //     state,
+        //     postalCode: postalcode,
+        //     dateOfBirth: dob ? new Date(dob).toISOString() : '',
+        //     countryCode: '+92',
+        //     fullName: Fullname,
+        //     accountname,
+        // };
+        // setLoading(true);
+        // try {
+        //     const response = await updateProfile(payload);
 
-            if (response?.success) {
-                getUserDetail();
-                setPopup(true);
-                // navigation.goBack();
-                // showSuccess('User profile updated successfully.');
-            }
-            setLoading(false);
-        } catch (error) {
-            setLoading(false);
-        }
+        //     if (response?.success) {
+        //         getUserDetail();
+        //         setPopup(true);
+        //         // navigation.goBack();
+        //         // showSuccess('User profile updated successfully.');
+        //     }
+        //     setLoading(false);
+        // } catch (error) {
+        //     setLoading(false);
+        // }
     };
 
     const onUpdateProfile = async () => {
         // if (!image) {
         onSave();
-        return;
-        // }
+        // return;
+        // // }
 
-        setLoading(true);
-        try {
-            const response = await avatarUpload(image);
-            console.log('imag response>', response);
-            onSave();
-        } catch (error) {
-            console.log('image errror', error.response);
-            setLoading(false);
-        }
+        // setLoading(true);
+        // try {
+        //     const response = await avatarUpload(image);
+        //     console.log('imag response>', response);
+        //     onSave();
+        // } catch (error) {
+        //     console.log('image errror', error.response);
+        //     setLoading(false);
+        // }
     };
 
     return (
         <Screen>
             <ScrollView>
                 <View style={{ marginTop: "30%" }} />
-                <CustomInput
+                <TextInput
                     value={bankname}
                     placeholder="Bank Name"
-                    onChangeText={setbankname}
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
-                <CustomInput
+                <TextInput
                     value={accountname}
-                    placeholder="Emergency Number"
-                    onChangeText={onChangeaccountname}
-                    // inputType={'phone'}
-                    keyboardType="number-pad"
+                    placeholder="Account Name"
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
-                <CustomInput
+                <TextInput
                     value={BSB}
                     placeholder="BSB"
-                    onChangeText={onChangeBSB}
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
-                <CustomInput
+                <TextInput
                     value={accountnumber}
                     placeholder="Account Number"
-                    onChangeText={onChangeaccountnumber}
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
-                <View>
-                <CustomButton
-                    isLoading={isLoading}
-                    // onButtonPress={onSave}
-                    onButtonPress={onUpdateProfile}
-                    title={'Save Changes'}
-                    buttonWrapper={{ marginTop: "30%" }}
-                />
-                <Text style={styles.cancelText} onPress={() => navigation.goBack()}>
-                    Cancel
-                </Text>
-
-                </View>
             </ScrollView>
 
             <CommonModal
@@ -214,4 +228,15 @@ const styles = StyleSheet.create({
     inputrow: {
         width: '48%',
     },
+    viewinput: {
+        width: '100%',
+        color: colors.twoATwoD,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: colors.twoATwoD,
+        fontFamily: fonts.Poppins.Regular,
+        marginVertical: 10,
+        height: "12%",
+        paddingLeft: "5%",
+    }
 });

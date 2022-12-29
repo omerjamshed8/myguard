@@ -20,33 +20,37 @@ import CommonModal from 'components/common-modal';
 import ResetSuccess from 'components/reset-success';
 import validator from 'validator';
 import { showError } from 'utils/toast';
+import useUser from 'hooks/useUser';
 
-function IncidentForm({ navigation }) {
+function EditIncident({route, navigation }) {
+  const { getUserFullName,getUserID, getUserImage, getUserEmail, user } = useUser();
+  const userid=getUserID()
+  useEffect(() => {
+    axios.get(
+      `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
+    ).then(res => {
+      console.log('successfully get response in incident form')
+      console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
+      setresponses(res.data.data)
+      setcustomer(responses[0]?.Customer)
+      // console.log("Customer namessss",customer)
+      // setdata(res.data.data.Customer.name)
+    }).catch(e => {
+      console.log('error')
+      console.log(e.response.data)
+    })
+  }, [])
 
-  // useEffect(() => {
-  //   axios.get(
-  //     "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents",
-  //   ).then(res => {
-  //     console.log('successfully get response in incident form')
-  //     console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
-  //     setresponses(res.data.data)
-  //     setcustomer(responses[0]?.Customer)
-  //     // console.log("Customer namessss",customer)
-  //     // setdata(res.data.data.Customer.name)
-  //   }).catch(e => {
-  //     console.log('error')
-  //     console.log(e.response.data)
-  //   })
-  // }, [])
-
+  const {props}=route.params;
+  console.log("Props in editincident",props)
   const [text, onChangeText] = React.useState('Full Name');
   const [names, onChangeName] = React.useState('');
   const [entry, onChangeentry] = React.useState('');
   const [submission, onChangeSubmission] = React.useState('');
-  const [fname, onChangefname] = React.useState('');
-  const [reqaction, onChangereqaction] = React.useState('');
+  const [fname, onChangefname] = React.useState(props?.formName);
+  const [reqaction, onChangereqaction] = React.useState(props?.requiredAction);
   const [reqAction, onChangereqAction] = React.useState('');
-  const [desc, onChangedesc] = React.useState('');
+  const [desc, onChangedesc] = React.useState(props?.description);
   const [responses, setresponses] = useState([])
   const [customer, setcustomer] = useState('');
   const [file, onchangeFile] = useState('');
@@ -69,6 +73,7 @@ function IncidentForm({ navigation }) {
 
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
+
     if(validator.isEmpty(fname))
     {
       return showError("Form name is required")
@@ -107,14 +112,16 @@ function IncidentForm({ navigation }) {
     }
 
 
-    axios.post(
-      "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
+    axios.put(
+      `https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/${props.id}`,
       {
         customerId:23,
         employeeId:5,
         siteId:5,
         status:"pending",
-        formName:fname
+        formName:fname,
+        requiredAction:reqAction,
+        description:desc,
       }
     ).then(res => {
       if (res?.status === 200) {
@@ -207,6 +214,7 @@ function IncidentForm({ navigation }) {
               inputType={'multiline'}
             /> */}
             <TextInput
+            value={desc}
               style={styles.inputs}
               placeholder="Type here..."
               onChangeText={onChangedesc}
@@ -268,7 +276,7 @@ function IncidentForm({ navigation }) {
                     isVisible={isPopup}
                     component={
                         <ResetSuccess
-                            title={'Incident added successfully.'}
+                            title={'Incident edited successfully.'}
                             onDone={() => {
                                 setPopup(false);
                                 navigation.goBack();
@@ -284,7 +292,7 @@ function IncidentForm({ navigation }) {
   );
 }
 
-export default IncidentForm;
+export default EditIncident;
 
 const styles = StyleSheet.create({
   container: {

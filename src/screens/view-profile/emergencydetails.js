@@ -7,6 +7,7 @@ import {
     StyleSheet,
     View,
     Text,
+    TextInput,
     Image,
     ScrollView,
     TouchableOpacity,
@@ -22,6 +23,8 @@ import validator from 'validator';
 import ResetSuccess from 'components/reset-success';
 import _ from 'lodash';
 import Dropdowns from './dropdownpicker';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 const EmergencyDetails = ({ navigation }) => {
     const {  user } = useUser();
@@ -47,8 +50,33 @@ const EmergencyDetails = ({ navigation }) => {
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
+    const [responses,setresponses]=useState()
+    const [data,setdata]=useState()
+
 
     const onClosePicker = () => setPicker(false);
+
+    useEffect(() => {
+        axios.get(
+            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
+        ).then(res => {
+            // console.log('successfully get response in profilejs of view-profile')
+            // console.log("!!!!!!!!!>>>>>>>>>", res?.data?.employee)
+            setresponses(res?.data?.employee)
+            setdata(res?.data?.employee)
+            setemergencydetails(res?.data?.employee?.EmployeeHrDetail?.emergencyDetails)
+            onChangeemergencynumber(res?.data?.employee?.phone)
+            // console.log("Location*******",res?.data?.employee?.Location);
+            onChangeAddress(res?.data?.employee?.Location?.address)
+            onChangeCity(res?.data?.employee?.Location?.city)
+            onChangePostalcode(res?.data?.employee?.Location?.postalCode)
+            onChangestate(res?.data?.employee?.Location?.state)
+            onChangecountry(res?.data?.employee?.Location?.country)
+        }).catch(e => {
+            console.log('error fetching data from profile api')
+            console.log(e.response.data)
+        })
+    }, [])
 
     const onSave = async () => {
         Keyboard.dismiss();
@@ -116,68 +144,49 @@ const EmergencyDetails = ({ navigation }) => {
         <Screen>
             <ScrollView>
                 <View style={{ marginTop: "30%" }} />
-                <CustomInput
+                <TextInput
                     value={emergencydetails}
                     placeholder="Emergency Details"
-                    onChangeText={setemergencydetails}
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
-                <CustomInput
+               <TextInput
                     value={emergencynumber}
                     placeholder="Emergency Number"
-                    onChangeText={onChangeemergencynumber}
-                    // inputType={'phone'}
-                    keyboardType="number-pad"
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
-                <CustomInput
+                <TextInput
                     value={address}
                     placeholder="Address"
-                    onChangeText={onChangeAddress}
+                    editable={false}
+                    style={styles.viewinput}
+                    placeholderTextColor={colors.twoATwoD}
                 />
 
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={'Country'}/>
-                    <Dropdowns ph={'State'}/>
-                    {/* <CustomInput
-                        containerStyle={styles.inputrow}
-                        value={country}
-                        placeholder="Country"
-                        onChangeText={onChangecountry}
-                    />
-                    <CustomInput
-                        containerStyle={styles.inputrow}
-                        value={state}
-                        placeholder="State"
-                        onChangeText={onChangestate}
-                    /> */}
+                    <Dropdowns ph={'Country'} disable={true}/>
+                    <Dropdowns ph={'State'} disable={true}/>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                <CustomInput
-                    containerStyle={styles.inputrow}
+                <TextInput
                     value={city}
                     placeholder="City"
-                    onChangeText={onChangeCity}
+                    editable={false}
+                    style={[styles.viewinput,{width:"50%",height:"70%"}]}
+                    placeholderTextColor={colors.twoATwoD}
                 />
-                    <CustomInput
-                        containerStyle={styles.inputrow}
-                        value={postalcode}
-                        placeholder="Zip/Postal code"
-                        onChangeText={onChangePostalcode}
-                    />
-                </View>
-                <View>
-                <CustomButton
-                    isLoading={isLoading}
-                    // onButtonPress={onSave}
-                    onButtonPress={onUpdateProfile}
-                    title={'Save Changes'}
-                    buttonWrapper={{ marginTop: "30%" }}
+                   <TextInput
+                    value={postalcode}
+                    placeholder="Zip/Postal Code"
+                    editable={false}
+                    style={[styles.viewinput,{width:"48%",height:"70%"}]}
+                    placeholderTextColor={colors.twoATwoD}
                 />
-                <Text style={styles.cancelText} onPress={() => navigation.goBack()}>
-                    Cancel
-                </Text>
-
                 </View>
             </ScrollView>
 
@@ -240,4 +249,15 @@ const styles = StyleSheet.create({
     inputrow: {
         width: '48%',
     },
+    viewinput: {
+        width: '100%',
+        color: colors.twoATwoD,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: colors.twoATwoD,
+        fontFamily: fonts.Poppins.Regular,
+        marginVertical: 10,
+        height: "10%",
+        paddingLeft: "5%",
+    }
 });

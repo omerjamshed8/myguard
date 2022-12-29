@@ -18,26 +18,28 @@ import ImageUploadd from './imageuploader';
 import axios from 'axios';
 import CommonModal from 'components/common-modal';
 import ResetSuccess from 'components/reset-success';
-import validator from 'validator';
-import { showError } from 'utils/toast';
 
-function IncidentForm({ navigation }) {
+function ViewIncident({route, navigation }) {
 
-  // useEffect(() => {
-  //   axios.get(
-  //     "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents",
-  //   ).then(res => {
-  //     console.log('successfully get response in incident form')
-  //     console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
-  //     setresponses(res.data.data)
-  //     setcustomer(responses[0]?.Customer)
-  //     // console.log("Customer namessss",customer)
-  //     // setdata(res.data.data.Customer.name)
-  //   }).catch(e => {
-  //     console.log('error')
-  //     console.log(e.response.data)
-  //   })
-  // }, [])
+    const { props } = route.params;
+    console.log("Props in ViewIncident", props)
+    console.log("props id", props?.Customer?.name)
+
+  useEffect(() => {
+    axios.get(
+      "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents",
+    ).then(res => {
+      console.log('successfully get response in incident form')
+      console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
+      setresponses(res.data.data)
+      setcustomer(responses[0]?.Customer)
+      // console.log("Customer namessss",customer)
+      // setdata(res.data.data.Customer.name)
+    }).catch(e => {
+      console.log('error')
+      console.log(e.response.data)
+    })
+  }, [])
 
   const [text, onChangeText] = React.useState('Full Name');
   const [names, onChangeName] = React.useState('');
@@ -46,11 +48,11 @@ function IncidentForm({ navigation }) {
   const [fname, onChangefname] = React.useState('');
   const [reqaction, onChangereqaction] = React.useState('');
   const [reqAction, onChangereqAction] = React.useState('');
-  const [desc, onChangedesc] = React.useState('');
+  const [desc, onChangedesc] = React.useState(null);
   const [responses, setresponses] = useState([])
-  const [customer, setcustomer] = useState('');
-  const [file, onchangeFile] = useState('');
-  const [video, onchangeVideo] = useState('')
+  const [customer, setcustomer] = useState();
+  const [file, onchangeFile] = useState();
+  const [video, onchangeVideo] = useState()
   const [isPopup, setPopup] = useState(false);
   console.log("video url got in incidentform", video)
   console.log("document url got in incidentform", file)
@@ -69,44 +71,6 @@ function IncidentForm({ navigation }) {
 
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
-    if(validator.isEmpty(fname))
-    {
-      return showError("Form name is required")
-    }
-    else if(!validator.isAlpha(fname))
-    {
-      return showError("Form name should be in alphabetical form")
-    }
-    else if(!validator.isLength(fname,3,50))
-    {
-      return showError("Form name should be between 3 to 50 alphabets")
-    }
-    else if(validator.isEmpty(reqaction))
-    {
-      return showError("Action is required")
-    }
-    else if(!validator.isAlpha(reqaction))
-    {
-      return showError("Required Action should be in alphabetical form")
-    }
-    else if(!validator.isLength(reqaction,3,50))
-    {
-      return showError("Required Action should be between 3 to 50 alphabets")
-    }
-    else if(validator.isEmpty(desc))
-    {
-      return showError("Description is required")
-    }
-    else if(!validator.isAlphanumeric(desc))
-    {
-      return showError("Description should be in alphabetical form")
-    }
-    else if(!validator.isLength(desc,3,1000))
-    {
-      return showError("Description should be between 3 to 1000 characters")
-    }
-
-
     axios.post(
       "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
       {
@@ -114,7 +78,7 @@ function IncidentForm({ navigation }) {
         employeeId:5,
         siteId:5,
         status:"pending",
-        formName:fname
+        formName:"omer"
       }
     ).then(res => {
       if (res?.status === 200) {
@@ -143,10 +107,10 @@ function IncidentForm({ navigation }) {
                 <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
             </View> */}
         {/* Input Wrapper */}
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%', marginTop: "20%" }}>
+        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%'}}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns width={Dimensions.get('window').width - 40} ph={"Name"} data={customer} />
+            <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={"Name"} data={customer} />
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -156,7 +120,7 @@ function IncidentForm({ navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns width={Dimensions.get('window').width - 40} ph={"Select Site"} />
+              <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={"Select Site"} />
             </View>
             {/* <CustomInput
               value={entry}
@@ -180,6 +144,7 @@ function IncidentForm({ navigation }) {
               placeholder="Name"
               onChangeText={onChangefname}
               placeholderTextColor={'black'}
+              editable={false}
             />
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Required Action</Text>
@@ -188,6 +153,7 @@ function IncidentForm({ navigation }) {
               placeholder="Name"
               onChangeText={onChangereqaction}
               placeholderTextColor={'black'}
+              editable={false}
             />
 
             {/* <Text style={{color:'#2A2D43',fontSize:12,fontWeight:'600'}}>Required Action</Text>
@@ -213,69 +179,10 @@ function IncidentForm({ navigation }) {
               placeholderTextColor={'black'}
               multiline={true}
               numberOfLines={4}
+              editable={false}
             />
           </View>
-
         </View>
-
-        <View>
-          <ImageUploadd 
-            onChangeFile={(files) => { onchangeFile(files) }}  
-            onChangeVideo={
-              (video) => {  
-              console.log('*********************')
-              console.log(video)
-              console.log('hitting api')
-              console.log('*********************') 
-              onchangeVideo(video.uri); 
-              const fd = new FormData()
-              fd.append('video', "Hello")
-              axios({
-                method: "post",
-                url: "https://securitylinksapi.herokuapp.com/api/v1/mp-routes/upload/video",
-                data: fd,
-                headers: { "Content-Type": "multipart/form-data" },
-              }).then(res => { 
-                console.log('&&&&&&&&& success') 
-                console.log(res)
-              }).catch(e => {
-                console.log('^^^^^ error') 
-                console.log(e.response.data)  
-              })
-            }
-          }  
-          />
-        </View>
-
-        {/* <View style={{flexDirection:'row',justifyContent:'center'}}>
-          <View style={{justifyContent:'center',alignItems:'center',margin:10,borderColor:'black',borderRadius:2}}>
-              <TouchableOpacity><Image source={require('../assets/images/uploadmedia.png')} style={{height: 100, width: 130}}/></TouchableOpacity>
-          </View>
-          <View style={{justifyContent:'center',alignItems:'center',margin:10,borderColor:'black',borderRadius:2}}>
-              <TouchableOpacity><Image source={require('../assets/images/icon69.png')} style={{height: 100, width: 130}}/></TouchableOpacity>
-          </View>
-        </View> */}
-
-        <View>
-          <CustomButton
-            buttonWrapper={styles.profileButton}
-            title={'Add Incident'}
-            onButtonPress={clickhandler}
-          />
-        </View>
-
-        <CommonModal
-                    isVisible={isPopup}
-                    component={
-                        <ResetSuccess
-                            title={'Incident added successfully.'}
-                            onDone={() => {
-                                setPopup(false);
-                                navigation.goBack();
-                            }}
-                        />
-                    }
-                />
         <View>
           <Text>{'\n'}</Text>
         </View>
@@ -284,7 +191,7 @@ function IncidentForm({ navigation }) {
   );
 }
 
-export default IncidentForm;
+export default ViewIncident;
 
 const styles = StyleSheet.create({
   container: {

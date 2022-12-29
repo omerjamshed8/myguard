@@ -18,11 +18,9 @@ export default function TimeSheet(){
             <ScrollView>
                 <Cards/>
                 <Cards/>
-                <IncidentCard/>
                 <Cards/>
                 <Cards/>
                 <Cards/>
-                <Document/>
             </ScrollView>
         </View>
     )

@@ -10,34 +10,54 @@ import {
 
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
+import { useState } from 'react';
+import axios from 'axios';
 
-class ScanScreen extends Component {
+export default function QRScanner({navigation}) {
+
+  var hours = new Date().getHours(); //To get the Current Hours
+  var min = new Date().getMinutes(); //To get the Current Minutes
+  var sec = new Date().getSeconds(); //To get the Current Seconds
+  const [time,setTime]=useState()
+  // console.log(time)
+
   onSuccess = e => {
     Linking.openURL(e.data).catch(err =>
       console.error('An error occured', err)
     );
+    setTime(hours + ":" + min + ":" + sec)
+    // console.log(time)
+    axios.post(
+      "https://securitylinksapi.herokuapp.com/api/v1/employee/13/scan-attendance/create",
+      {
+        scannedTime: new Date().toISOString(),
+      }
+    ).then(res => {
+      console.log('successfully scanned and marked attendance')
+      console.log(res)
+    }).catch(e => {
+      console.log('error while sending request')
+      console.log(e.response.data)
+    })
+
   };
 
-  render() {
-    return (
-      <QRCodeScanner
-        onRead={this.onSuccess}
-        flashMode={RNCamera.Constants.FlashMode.torch}
-        topContent={
-          <Text style={styles.centerText}>
-            Go to{' '}
-            <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-            your computer and scan the QR code.
-          </Text>
-        }
-        bottomContent={
-          <TouchableOpacity style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>OK. Got it!</Text>
-          </TouchableOpacity>
-        }
-      />
-    );
-  }
+  return (
+    <QRCodeScanner
+      onRead={this.onSuccess}
+      // flashMode={RNCamera.Constants.FlashMode.torch}
+      topContent={
+        <Text style={styles.centerText}>
+          Place your camera infront of QR code.
+        </Text>
+      }
+      // bottomContent={
+      //   <TouchableOpacity style={styles.buttonTouchable} onPress={()=>{navigation.navigate('Home')}}>
+      //     <Text style={styles.buttonText}>Close</Text>
+      //   </TouchableOpacity>
+      // }
+    />
+  );
 }
 
 const styles = StyleSheet.create({
@@ -59,5 +79,3 @@ const styles = StyleSheet.create({
     padding: 16
   }
 });
-
-AppRegistry.registerComponent('default', () => ScanScreen);

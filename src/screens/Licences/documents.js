@@ -1,89 +1,160 @@
-import React from "react";
-import {View,Text,StyleSheet,TouchableOpacity, Image} from 'react-native';
+import axios from "axios";
+import { DocsContext } from "contexts/DocsContext";
+import React, { useContext } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import Dropdowns from "screens/view-profile/dropdownpicker";
+import fonts from "theme/fonts";
 
-export default function Document(){
-    const Card=()=>{
+export default function Document({ navigation }) {
+    const [responses, setresponses] = useState('')
+    const [data, setdata] = useState()
+
+    var createdat;
+    var expirydate;
+
+    const docsCtx = useContext(DocsContext);
+    console.log("Data consoled in documents of docsContext", docsCtx.data)
+
+
+    console.log("response.data", responses[0]?.Document?.name)
+
+    const datas = [
+        { label: '1', value: '1' },
+        { label: "2", value: '2' },
+        { label: "3", value: '3' },
+        { label: "4", value: '4' },
+        { label: "5", value: '5' },
+        { label: "6", value: '6' },
+        { label: "7", value: '7' },
+        { label: "8", value: '8' },
+        { label: "9", value: '9' },
+        { label: "10", value: '10' },
+    ]
+
+    useEffect(() => {
+        axios.get(
+            "https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs",
+        ).then(res => {
+            console.log('successfully get response in documents')
+            console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+            setresponses(res?.data?.data)
+            setdata(res?.data?.data)
+            docsCtx.setData(res?.data?.data)
+            // createdat=res?.data?.data?.createdAt
+            // expirydate=res?.data?.data?.expiryDate
+        }).catch(e => {
+            console.log('error')
+            console.log(e.response.data)
+        })
+    }, [])
+    const Card = () => {
     }
 
-    const clickhandler=()=>{
+    const clickhandler = () => {
 
     }
-    return(
+    var newdate;
+    const dateconverter = (date) => {
+        createdat = new Date(date)
+        newdate=createdat.getFullYear() + ' ' + (createdat.getMonth() + 1) + ' ' + createdat.getDate()
+        console.log("created at",newdate)
+        return newdate
+    }
+
+
+    return (
         <View style={styles.container}>
-        {/* <ScrollView> */}
-        <View style={{height:"auto",width:"95%",borderWidth:1.5,borderRadius:10,margin:10,marginBottom:15}}>
-            <View style={{flexDirection:"row"}}>
-                <Text style={{color:'black',padding:20,width:'50%',height:"100%",fontWeight:'bold',color:'#2A2D43'}}>
-                Document Name
-                <Text style={{fontWeight:"normal",color:'#2A2D43',fontStyle:'italic'}}>
-                    {'\n'}
-                Document Type
-                </Text>
-                <Text style={{color:'#2A2D43',fontWeight:'500'}}>
-                {'\n'}
-                Date Added: 2022 June 20
-                Date Expire: 2024 June 20
-                {'\n'}
-                </Text>
-                <Text style={{color:'#2A2D43',fontFamily:'Poppins',fontStyle:'italic'}}>
-                Renewal Period
-                </Text>
-                </Text>
-                <View style={{flexDirection:'row'}}>
-                    <TouchableOpacity onPress={clickhandler} style={{marginTop:20,marginLeft:80,padding:4}}>
-                            <Image source={require('../../assets/images/view.png')} style={{height:30,width:30}}/>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={clickhandler} style={{padding:4,marginTop:20,marginLeft:4}}>
-                            <Image source={require('../../assets/images/Status.png')} style={{height:30,width:30}}/>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={{display:'flex',position:'absolute',top:100,right:20}}>
-                <TouchableOpacity style={[styles.appButtonContainerLarge,{borderColor:'#F2385F'}]} onPress={clickhandler}>
-                            <Text style={[styles.appButtonTextLarge,{paddingHorizontal:15,paddingVertical:8}]}>Expired</Text>
-                    </TouchableOpacity>
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+                {
+                    docsCtx.data ? docsCtx.data.map((item, index) => (    //pehlay responses tha yahan
+                        <View key={index} style={{ height: "auto", width: "95%", borderWidth: 1.5, borderRadius: 10, margin: 10, marginBottom: 10 }}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ padding: 20, width: '50%', height: "auto", fontSize: 17, color: '#2A2D43', fontFamily: fonts.Poppins.Medium }}>
+                                    {item?.Document?.name}
+                                    <Text style={{ fontSize: 12, color: '#2A2D43', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular }}>
+                                        {'\n'}
+                                        {item?.Document?.type}
+                                    </Text>
+                                    <Text style={{ color: '#2A2D43',fontSize: 14, fontFamily: fonts.Poppins.Medium }}>
+                                        {'\n'}
+                                        Date Added: {dateconverter(item?.Document?.createdAt)}    {'\n'}
+                                        Date Expire: {dateconverter(item?.Document?.expiryDate)}
+                                        {'\n'}
+                                    </Text>
+                                    <Text style={{ color: '#2A2D43', fontFamily: 'Poppins', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular, fontSize: 13 }}>
+                                        Renewal Period
+                                    </Text>
+                                    <View>
+                                        <Dropdowns data={datas} />
+                                    </View>
+                                </Text>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity onPress={() => {
+                                        navigation.navigate('ViewDocument', {
+                                            props: item
+                                        })
+                                    }} style={{ marginTop: 20, marginLeft: 80, padding: 4 }}>
+                                        <Image source={require('../../assets/images/view.png')} style={{ height: 25, width: 25 }} />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => {
+                                        navigation.navigate('EditDocument', {
+                                            props: item
+                                        })
+                                    }} style={{ padding: 4, marginTop: 20, marginLeft: 4 }}>
+                                        <Image source={require('../../assets/images/Status.png')} style={{ height: 25, width: 25 }} />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <View style={{ position: 'absolute', top: 80, right: 20 }}>
+                                <TouchableOpacity style={[styles.appButtonContainerLarge, { borderColor: '#F2385F' }]} onPress={clickhandler}>
+                                    <Text style={[styles.appButtonTextLarge, { paddingHorizontal: 15, paddingVertical: 8 }]}>Expired</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>)) : null
+                }
+            </ScrollView>
         </View>
-    </View>
     )
 }
 
 
-const styles=StyleSheet.create({
-    container:{
-        flex:1,
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
         // justifyContent:'center',
-        alignItems:'center',
-        backgroundColor:"white",
+        alignItems: 'center',
+        backgroundColor: "white",
     },
-    appButtonContainer:{
-        width:80,
-        height:30,
-        backgroundColor:'#F2385F',
-        borderRadius:8,
-        justifyContent:"center"
+    appButtonContainer: {
+        width: 80,
+        height: 30,
+        backgroundColor: '#F2385F',
+        borderRadius: 8,
+        justifyContent: "center"
     },
-    appButtonText:{
-        textAlign:'center',
-        justifyContent:'center',
-        alignItems:'center'
+    appButtonText: {
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    appButtonContainerLarge:{
-        padding:0,
-        width:"100%",
-        height:"100%",
-        backgroundColor:'#F2385F',
-        borderRadius:8,
-        justifyContent:"center",
-        marginTop:'0.2%',
-        marginLeft:"0%"
+    appButtonContainerLarge: {
+        padding: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: '#F2385F',
+        borderRadius: 8,
+        justifyContent: "center",
+        marginTop: '0.2%',
+        marginLeft: "0%"
     },
-    appButtonTextLarge:{
-        textAlign:'center',
-        justifyContent:'center',
-        alignItems:'center',
-        fontWeight:'bold',
-        fontSize:10,
-        color:'white'
+    appButtonTextLarge: {
+        textAlign: 'center',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontWeight: 'bold',
+        fontSize: 10,
+        color: 'white'
     }
 })

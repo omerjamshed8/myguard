@@ -17,13 +17,11 @@ import {
   import {launchImageLibrary} from 'react-native-image-picker';
 import CustomButton from 'components/custom-button';
   
-  const ImageUploadd = ({onChangeFile,onChangeVideo}) => {
+  const DocUploader = () => {
     const [filePath, setFilePath] = useState({});
     const [selectedVideo, setSelectedVideo] = useState({});
-    console.log("Selected video is:",selectedVideo.uri)
     const [SelDOCUMENT, setDOCUMENT] = useState({});
-    console.log(selectedVideo.uri);
-    // console.log("doc uri",SelDOCUMENT.uri)
+    console.log(selectedVideo);
     const requestExternalWritePermission = async () => {
       if (Platform.OS === 'android') {
         try {
@@ -64,20 +62,8 @@ import CustomButton from 'components/custom-button';
               //  response.assets.map(item => item),
               value.uri,
             );
-            
             let video = value.uri;
-            console.log(">>>",video)
             setSelectedVideo(value);
-            console.log('changing...')
-            console.log(typeof onChangeVideo)
-            if(typeof onChangeVideo === 'function') {
-              console.log('inside...')
-              onChangeVideo(selectedVideo)
-            } else {
-              console.log('outside...')
-            }
-            // onChangeVideo(selectedVideo)
-            // console.log("on line 69 imageupload",selectedVideo)
           }
   
           if (response.didCancel) {
@@ -116,8 +102,6 @@ import CustomButton from 'components/custom-button';
   
         console.log(response);
         setDOCUMENT(response);
-        onChangeFile(SelDOCUMENT.uri);
-        console.log("on line 109 imageupload",SelDOCUMENT.uri)
       } catch (err) {
         console.warn(err);
       }
@@ -297,8 +281,7 @@ import CustomButton from 'components/custom-button';
                <Text style={{fontFamily:FONTS.MEDIUM, fontSize:10, color:'#000'}}>Upload File</Text>
           </TouchableOpacity>
         </View>
-        <Text>{'\n'}</Text>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={{
             width: "90%",
             height: 50,
@@ -312,7 +295,7 @@ import CustomButton from 'components/custom-button';
             {' '}
             Add Incident{' '}
           </Text>
-        </TouchableOpacity> */}
+        </TouchableOpacity>
         {/* <View>
           <CustomButton
             buttonWrapper={styles.profileButton}
@@ -323,7 +306,7 @@ import CustomButton from 'components/custom-button';
     );
   };
   
-  export default ImageUploadd;
+  export default DocUploader;
   
   const styles = StyleSheet.create({
     profileButton: {

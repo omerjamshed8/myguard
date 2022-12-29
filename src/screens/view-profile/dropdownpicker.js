@@ -1,38 +1,27 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
 // import DropDownPicker from 'react-native-dropdown-picker';
-import {Dropdown} from 'react-native-element-dropdown';
-import {FONTS} from './font';
+import { Dropdown } from 'react-native-element-dropdown';
+import { FONTS } from './font';
 
 import DateTimePicker from 'react-native-modal-datetime-picker';
-const data = [
-  {label: 'Punjab', value: '1'},
-  {label: 'Sindh', value: '2'},
-  {label: 'Baloch', value: '3'},
-  {label: 'jeorgea', value: '4'},
-  {label: 'Sharga', value: '5'},
+const datas = [
+  { label: 'Punjab', value: '1' },
+  { label: 'Sindh', value: '2' },
+  { label: 'Baloch', value: '3' },
+  { label: 'jeorgea', value: '4' },
+  { label: 'Sharga', value: '5' },
 ];
-const statess=[{
-  countrys:"Pakistan",id:1,states:"Punjab",genders:"Male",startdates:"16-12-2022",enddates:"20-12-2022",statuss:"Active"
-},
-{
-  countrys:"India",id:2,states:"Punjab",genders:"female",startdates:"16-12-2022",enddates:"20-12-2022",statuss:"inActive"
-},
-{
-  countrys:"Argentina",id:3,states:"Punjab",startdates:"16-12-2022",enddates:"20-12-2022"
-},
-{
-  countrys:"Portugal",id:4,states:"Punjab",startdates:"16-12-2022",enddates:"20-12-2022"
-}
-]
-const Dropdowns = ({navigation,ph}) => {
-  console.log(ph)
+
+const Dropdowns = ({ navigation, ph, disable, width, bgcolor, phcolor, initialtype, borderradius, data, onchange }) => {
   const [gender, setGender] = useState('male');
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
-    {label: 'Punjab', value: 1},
-    {label: 'Sindh', value: 2},
+    { label: 'Punjab', value: 1 },
+    { label: 'Sindh', value: 2 },
   ]);
+
+  console.log("initialtype",initialtype);
 
   function onSelect(item) {
     // console.log(item);
@@ -42,6 +31,7 @@ const Dropdowns = ({navigation,ph}) => {
     console.log(items);
   }
   const [value, setValue] = useState(null);
+  // console.log("Value=",value);
   const [isFocus, setIsFocus] = useState(false);
 
   const renderItem = item => {
@@ -53,31 +43,34 @@ const Dropdowns = ({navigation,ph}) => {
   };
   return (
     <>
-      <View style={{justifyContent:'space-between',width:'49%'}}>
+      <View style={{ justifyContent: 'space-between', width: '49%' }}>
         <Text
-          style={{fontFamily: FONTS.MEDIUM}}>
-          Poppin medium
+          style={{ fontFamily: FONTS.MEDIUM }}>
         </Text>
         {/* <View style={{height: 100}}>
           <DropDownPicker />
         </View> */}
-        <View style={{width:"100%"}}>
+        <View style={{ width: width }}>
           <Dropdown
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
+            style={[styles.dropdown, { backgroundColor: bgcolor, borderRadius: borderradius ? borderradius : 10 }]}
+            placeholderStyle={[styles.placeholderStyle, { color: phcolor ? phcolor : '#000' }]}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}
             iconStyle={styles.iconStyle}
-            data={data}    //data tha pehlay yahan
+            data={data ? data : datas}    //data tha pehlay yahan
             maxHeight={200}
             labelField="label"
             valueField="value"
-            placeholder={ph}
+            placeholder={ph}  //pehlay ph tha
             searchPlaceholder="Search..."
+            disable={disable}
             value={value}
             onChange={item => {
               console.log(item.value);
-              setValue(item.value);
+              setValue(item.label);
+              if (typeof onchange === 'function') {
+                onchange(item.label)
+              }
             }}
             renderItem={renderItem}
           />
@@ -100,14 +93,14 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     fontSize: 12,
-    color: '#000',
+    color: '#2A2D43',
     // backgroundColor: '#000',
-    borderColor: '#000',
+    borderColor: '#2A2D43',
     backgroundColor: 'white',
     borderWidth: 1,
     // padding: 15,
     borderRadius: 10,
-    borderWidth:1.5
+    borderWidth: 2
   },
   containerStyle: {
     backgroundColor: '#ff3',
@@ -149,11 +142,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: FONTS.MEDIUM,
     color: '#000',
-    textAlign:'center'
+    textAlign: 'center'
   },
   selectedTextStyle: {
     fontSize: 16,
     fontFamily: FONTS.MEDIUM,
+    textAlign: 'center',
     color: '#000',
   },
   iconStyle: {

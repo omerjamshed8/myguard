@@ -23,10 +23,10 @@ import ResetSuccess from 'components/reset-success';
 function SignIn({navigation}) {
   const dispatch = useDispatch();
   const [email, onChangeEmail] = React.useState(
-    __DEV__ ? 'rohit@mailinator.com' : '',
+    __DEV__ ? 'emp43@test.com' : '',    //rohit@mailinator.com
   );
   const [password, onChangePassword] = React.useState(
-    __DEV__ ? 'Rohit@321' : '',
+    __DEV__ ? 'Lahore2?' : '',      //Rohit@321
   );
   const [isLoading, setIsLoading] = React.useState(false);
   const [isPopup, setPopup] = useState(false);

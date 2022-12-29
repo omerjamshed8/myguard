@@ -14,13 +14,26 @@ import {FONTS} from '../../assets1/Style/font';
 
 import {PhoneInputState} from 'react-native-phone-number-input';
 import PhoneInput from 'react-native-phone-number-input';
-const Countryinput = () => {
+const Countryinput = ({disabled,onchange,value}) => {
+  console.log("value",value)
   const phoneInput = useRef(null);
   console.log(phoneInput);
   useEffect(() => {
     console.log(phoneInput?.current?.getCallingCode());
   }, []);
   const [selectedCallingCode, setSelectedCallingCode] = useState('90');
+  const [num,setnum]=useState()
+  const [countrycode,setcountrycode]=useState()
+  console.log("number entered",num)
+  console.log("Country code",countrycode?.callingCode[0])
+  const c_code=countrycode?.callingCode[0]
+  let a=`${c_code}${num}`;
+  console.log("a=",a)
+  // const number=""+c_code+num;
+  // console.log(""+c_code+num);
+  if(typeof onchange === 'function') {
+    onchange(a)
+  }
   function pressCountry() {
     console.log(PhoneInputState, 'STATE');
     phoneInput?.current?.modalVisible === true;
@@ -28,7 +41,7 @@ const Countryinput = () => {
   function Render() {
     return (
       <View style={{position: 'absolute', right: -30, zIndex: -1}}>
-        <Text>ksdjfk</Text>
+        <Text></Text>
       </View>
     );
   }
@@ -43,7 +56,7 @@ const Countryinput = () => {
             position: 'absolute',
             zIndex: 1,
             top: 26,
-            left: 93,
+            left: 43,
           }}
           resizeMode={'contain'}
         />
@@ -63,8 +76,9 @@ const Countryinput = () => {
           }}></TouchableOpacity> */}
         <PhoneInput
           placeholder="Type here....... "
-          // layout="second"
-          // defaultValue="0993833"
+          disabled={disabled}
+          onChangeText={text=>setnum(text)}
+          value={value}
           containerStyle={[
             {
               backgroundColor: '#fff',
@@ -79,9 +93,10 @@ const Countryinput = () => {
             },
           ]}
           disableArrowIcon
+          onChangeCountry={setcountrycode}
           textInputStyle={{
-            position: 'absolute',
-            top: -25,
+            // position: 'absolute',
+            // top: -25,
             // alignSelf: 'center',
             color: '#000',
             // backgroundColor: '#000',
@@ -91,8 +106,9 @@ const Countryinput = () => {
             fontSize: 16,
             // marginTop: -10,
             // top: 3,
-            bottom: -5,
-            left: 60,
+            // bottom: -5,
+            // left: 60,
+            padding:"auto",
             // marginLeft: 30,
             width: Dimensions.get('screen').width / 2,
             height: 110,

@@ -96,7 +96,7 @@ const TabNav = () => {
             return {
             headerShown: true,
             headerStyle: routeStyles.headerStyle,
-            headerTitle: 'Security Licences',
+            headerTitle: 'Documents',
             headerTitleStyle: routeStyles.headerTitleStyle,
             headerTitleAlign: 'center',
             headerRight: () => (

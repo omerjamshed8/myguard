@@ -29,27 +29,26 @@ import DatePick from './view-profile/datepicker';
 import UnavailabilityCard from './cardcomponent/unavailabilitycard';
 import { useContext } from 'react';
 import { UnavailContext } from 'contexts/UnavailContext';
-// import Countryinput from './dropdownphone';
 import Axios from 'axios';
 import Dropdowns from './view-profile/dropdownpicker';
 
 const Context = createContext();
-const UnavailForm = ({ navigation }) => {
+const ViewUnavail = ({ route, navigation }) => {
+
+    const { props } = route.params;
+    console.log("Props in ViewUnavail", props)
+    console.log("props id", props.id)
+
     const { getUserFullName, getUserImage, getUserEmail, user } = useUser();
     const unavailCtx = useContext(UnavailContext)
-    const [title, settitle] = useState('');
-    const [type, settype] = useState('');
-    const [note, setnote] = useState('');
-    const [status, onChangestatus] = useState(user?.UserProfile?.status)
-    const [startdate, onChangestartdate] = useState(user?.UserProfile?.startdate)
-    const [enddate, onChangeenddate] = useState(user?.UserProfile?.enddate)
+    const [title, settitle] = useState(props?.title);
+    const [type, settype] = useState(props?.type);
+    const [note, setnote] = useState(props?.note);
+    const [status, onChangestatus] = useState(props?.status)
+    const [startdate, onChangestartdate] = useState(props?.startDate)
+    const [enddate, onChangeenddate] = useState(props?.endDate)
     console.log("type::::::", type);
     console.log("status::::::", status);
-
-    const [isPicker, setPicker] = useState(false);
-    const [image, setImage] = useState(null);
-    const [isLoading, setLoading] = useState(false);
-    const [isPopup, setPopup] = useState(false);
 
     const arr = [title, type, status, note]
 
@@ -57,82 +56,13 @@ const UnavailForm = ({ navigation }) => {
         { label: 'Pending', value: 1 },
         { label: 'Reject', value: 2 },
         { label: 'Approved', value: 3 },
-    ]
+    ];
 
     const types = [
         { label: 'casual', value: 1 },
         { label: 'annual', value: 2 },
         { label: 'sick', value: 3 },
     ]
-
-    const onClosePicker = () => setPicker(false);
-
-    const onUpdateProfile = async () => {
-        if (validator.isEmpty(title)) {
-            return showError("Title should not be empty")
-        }
-        else if(!validator.isAlpha(title))
-        {
-            return showError("Title should be in alphabets")
-        }
-        else if(!validator.isLength(title,3,20))
-        {
-            return showError("Title should be between 3 to 20 characters")
-        }
-        else if (validator.isEmpty(type)) {
-            return showError("Type is required")
-        }
-        else if (validator.isEmpty(status)) {
-            return showError("Status is required")
-        }
-        else if (validator.isEmpty(startdate)) {
-            return showError("Start date is required")
-        }
-        else if (validator.isEmpty(enddate)) {
-            return showError("End date is required")
-        }
-        else if (validator.isEmpty(note)) {
-            return showError("Note is required")
-        }
-        else
-        {
-            console.log('*****************')
-            console.log('clicked')
-            //api k liye set data ka function use krna hai
-            unavailCtx.add({
-                title:title,
-                note:note,
-                type:type,
-                status:status,
-                startDate:startdate,
-                endDate:enddate 
-            })
-            console.log(title,note,type,status,startdate,enddate)
-    
-            console.log(startdate)
-    
-    
-            Axios.post(
-                "https://securitylinksapi.herokuapp.com/api/v1/employee/13/unavails/create",
-                {
-                    title: title,
-                    type: type,
-                    status: status,
-                    note: note,
-                    startDate: startdate,
-                    endDate: enddate
-                }
-            ).then(res => {
-                console.log('success')
-                console.log(res)
-                setPopup(true)
-            }).catch(e => {
-                console.log('error')
-                console.log(e.response.data)
-            })
-        }
-    };
-
     return (
         <Screen>
             <ScrollView>
@@ -148,17 +78,18 @@ const UnavailForm = ({ navigation }) => {
                         value={title}
                         placeholder="Add Title"
                         onChangeText={settitle}
+                        editable={false}
                     />
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Type</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} ph={'Select Type'} data={types} onchange={value => {
+                    <Dropdowns width={"200%"} disable={true} ph={'Select Type'} data={types} onchange={value => {
                         settype(value)
                     }} />
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Status</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} ph={'Select Status'} data={data} onchange={value => {
+                    <Dropdowns width={"200%"} disable={true} ph={'Select Status'} data={data} onchange={value => {
                         onChangestatus(value)
                     }} />
                 </View>
@@ -167,65 +98,32 @@ const UnavailForm = ({ navigation }) => {
                     <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginLeft: '35%' }}>End Date</Text>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                    <DatePick open={true} width={"90%"} fontsize={12} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12} open={false} onChange={date => {
                         onChangestartdate(date)
                     }} />
-                    <DatePick open={true} width={"90%"} fontsize={12} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12} open={false} onChange={date => {
                         onChangeenddate(date)
                     }} />
-
                 </View>
                 <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginTop: 12 }}>Note</Text>
                 <TextInput
+                    value={note}
                     style={styles.inputs}
                     placeholder="Type here..."
                     onChangeText={setnote}
                     placeholderTextColor={'black'}
                     multiline={true}
                     numberOfLines={4}
+                    editable={false}
                 />
                 <View>
                 </View>
-
-                <CustomButton
-                    isLoading={isLoading}
-                    // onButtonPress={onSave}
-                    onButtonPress={onUpdateProfile}
-                    title={'Add'}
-                    buttonWrapper={{ marginTop: 30 }}
-                />
-                <Text style={styles.cancelText} onPress={() => navigation.navigate('Home')}>
-                    Cancel
-                </Text>
             </ScrollView>
-
-            <CommonModal
-                onClose={onClosePicker}
-                isVisible={isPicker}
-                component={
-                    <PickerPopup
-                        handleClose={onClosePicker}
-                        handleResponse={e => setImage(e?.[0])}
-                    />
-                }
-            />
-            <CommonModal
-                isVisible={isPopup}
-                component={
-                    <ResetSuccess
-                        title={'Unavailability added successfully.'}
-                        onDone={() => {
-                            setPopup(false);
-                            navigation.navigate('Home');
-                        }}
-                    />
-                }
-            />
         </Screen>
     );
 };
 
-export default UnavailForm;
+export default ViewUnavail;
 export { Context };
 
 const styles = StyleSheet.create({
