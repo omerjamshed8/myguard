@@ -83,13 +83,13 @@ const ViewUnavail = ({ route, navigation }) => {
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Type</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} disable={true} ph={'Select Type'} data={types} onchange={value => {
+                    <Dropdowns width={"200%"} disable={true} ph={props?.type} data={types} onchange={value => {
                         settype(value)
                     }} />
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Status</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} disable={true} ph={'Select Status'} data={data} onchange={value => {
+                    <Dropdowns width={"200%"} disable={true} ph={props?.status} data={data} onchange={value => {
                         onChangestatus(value)
                     }} />
                 </View>

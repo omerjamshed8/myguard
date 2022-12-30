@@ -26,12 +26,27 @@ import ResetSuccess from 'components/reset-success';
 import { showError, showSuccess } from 'utils/toast';
 import validator from 'validator';
 import { DocsContext } from 'contexts/DocsContext';
+import useUser from 'hooks/useUser';
 
 function AddDocument({ navigation }) {
 
+  const {getUserID}=useUser()
+  const userID=getUserID()
   useEffect(() => {
-    setfile([])
-    setpressed(false)
+    // setfile([])
+    // setpressed(false)
+      (async () => {
+          let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+          console.log(1)
+          if (employeeResponse.data.employee) {
+              console.log(2)
+              let employee = employeeResponse.data.employee
+              setemployeeid(employee.id)
+          } else {
+              console.log(3)
+          }
+          console.log(4)
+      })()
   }, [])
 
   const [text, onChangeText] = React.useState('Full Name');
@@ -48,6 +63,7 @@ function AddDocument({ navigation }) {
   const [date, setdate] = useState('')
   const [isPopup, setPopup] = useState(false);
   const [succed, setsucceed] = useState(false);
+  const [empId,setemployeeid]=useState('')
 
   const docsCtx = useContext(DocsContext);
 
@@ -141,7 +157,7 @@ function AddDocument({ navigation }) {
       //           })
 
       axios.post(
-        "https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs/create",
+        `https://securitylinksapi.herokuapp.com/api/v1/employee/${empId}/docs/create`,
         {
           name: names,
           type: entry,

@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity, Image, ScrollView, SafeAreaView, StyleShe
 import { Context } from 'screens/unavailform';
 import useUser from "hooks/useUser";
 import Dropdowns from "screens/view-profile/dropdownpicker";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function UnavailabilityCard({ navigation }) {
     const { getUserID, user } = useUser();
@@ -17,26 +18,87 @@ export default function UnavailabilityCard({ navigation }) {
     const [responses, setresponses] = useState('')
     const [label,setLabel]=useState('')
     const [copy,setcopy]=useState();
+    const [empId,setempId]=useState()
 
     const dataa=[{label: 'Pending', value: '1'},
     {label: 'rejected', value: '2'},
     {label: 'Approved', value: '3'},]
 
+    const isFocused=useIsFocused()
     useEffect(() => {
-        console.log('rendered ******************')
-        axios.get(
-            `https://securitylinksapi.herokuapp.com/api/v1/employee/13/unavails`,
-        ).then(res => {
-            console.log('successfully get response')
-            console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
-            setresponses(res?.data?.data)
-            setcopy(res.data.data)
-            unavailCtx.setData(res?.data?.data)
-        }).catch(e => {
-            console.log('error')
-            console.log(e.response.data)
-        })
-    }, [])
+      
+        if(isFocused)
+        {
+            // async function fetchData() {
+            //     try {
+            //         const response = await fetch(
+            //             `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`,
+            //         );
+            //         const json = await response.json();
+            //         setempId(json.employee.id);
+            //         console.log("Employee ID",json.employee.id);
+            //     } catch (e) {
+            //         console.error(e);
+            //     }
+            // };
+            // async function fetchUnavail() {
+            //     try {
+            //         const response = await fetch(
+            //             `https://securitylinksapi.herokuapp.com/api/v1/employee/${empId}/unavails`,
+            //         );
+            //         const json = await response.json();
+            //         console.log("Unavailabilities",json);
+            //         setresponses(json?.data)
+            //         setcopy(json?.data)
+            //         unavailCtx.setData(response?.data?.data)
+
+            //     } catch (e) {
+            //         console.error(e);
+            //     }
+            // };
+            // fetchData();
+            // fetchUnavail();
+            // (async function fetchEmployeeId () {
+            //     await axios.get(
+            //         `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`,
+            //     ).then(res => {
+            //         console.log('successfully got employeeid')
+            //         console.log("***********", res.data.employee.id)
+            //         setempId(res.data.employee.id)
+            //     }).catch(e => {
+            //         console.log('error')
+            //         console.log(e.response.data)
+            //     })
+            //     await axios.get(
+            //         `https://securitylinksapi.herokuapp.com/api/v1/employee/${empId}/unavails`,
+            //     ).then(res => {
+            //         console.log('successfully get response')
+            //         console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+            //         setresponses(res?.data?.data)
+            //         setcopy(res.data.data)
+            //         unavailCtx.setData(res?.data?.data)
+            //     }).catch(e => {
+            //         console.log('error')
+            //         console.log(e.response.data)
+            //     })
+            // })
+            (async () => {
+                let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+                console.log(1)
+                if(employeeResponse.data.employee) {
+                    console.log(2)
+                    let employee = employeeResponse.data.employee
+                    let unavailsResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/unavails`)
+                    let unavails = unavailsResponse.data.data 
+                    setcopy(unavails)
+                    setresponses(unavails)
+                } else {
+                    console.log(3)
+                }
+                console.log(4)
+            })()
+        }
+    }, [isFocused])
 
     const clickhandler = () => {
 
@@ -56,11 +118,12 @@ export default function UnavailabilityCard({ navigation }) {
             return '#20A53D'
         }
     }
-    const filterstatus=()=>{
+    const filterstatus=(label)=>{
+        console.log('came here')
         console.log("*************",label)
         const arr=responses.filter((item)=>item.status===label.toLowerCase())
         // const arr=responses;
-        console.log("/////////////////",arr)
+        // console.log("/////////////////",arr)
         setcopy(arr)
     }
 
@@ -69,8 +132,8 @@ export default function UnavailabilityCard({ navigation }) {
             <View style={{justifyContent:'center',marginTop:-24}}>
             <Dropdowns width={Dimensions.get('window').width} bgcolor="#F2385F" ph={"All"} phcolor={"white"} borderradius={-1} data={dataa}
                 onchange={(label)=>{
-                    setLabel(label)
-                    filterstatus()
+                    // setLabel(label)
+                    filterstatus(label)
                 }}
             />
             </View>
@@ -85,8 +148,8 @@ export default function UnavailabilityCard({ navigation }) {
                                 <Text style={[styles.tex, { paddingLeft: "5%" }]}>
                                 {/* <Text style={{ color: '#2A2D43', fontSize: 14, fontWeight: '500' }}>{JSON.stringify(item)} {'\n'}</Text> */}
                                     <Text style={{ color: '#2A2D43', fontSize: 14, fontWeight: '500' }}>{item.title} {'\n'}</Text>
-                                    <Text style={{ color: '#2A2D43', fontStyle: 'italic' }}>{item.startDate} {'\n'}</Text>
-                                    <Text style={{ color: '#2A2D43', fontSize: 12 }}>{item.endDate} {'\n'}</Text>
+                                    <Text style={{ color: '#2A2D43', fontStyle: 'italic' }}>{item?.startDate} {'\n'}</Text>
+                                    <Text style={{ color: '#2A2D43', fontSize: 12 }}>{item?.endDate} {'\n'}</Text>
                                     <Text style={{ color: '#2A2D43', fontSize: 14, fontWeight: '500' }}>{item.type} {'\n'}</Text>
                                 </Text>
                                 <View style={{ flexDirection: "row", position: "absolute", right: 10, top: 15 }}>

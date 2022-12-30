@@ -20,29 +20,45 @@ import CommonModal from 'components/common-modal';
 import ResetSuccess from 'components/reset-success';
 import validator from 'validator';
 import { showError } from 'utils/toast';
+import useUser from 'hooks/useUser';
 
 function IncidentForm({ navigation }) {
+  const { getUserID, user } = useUser();
+  const userID=getUserID()
+  useEffect(() => {
+    (async () => {
+      let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+      console.log(1)
+      if(employeeResponse.data.employee) {
+          console.log(2)
+          let employee = employeeResponse.data.employee
+          setemployeeid(employee.id)
+          let customerResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/customers`)
+          let customers = customerResponse.data.data
+          setcustomer(customers)
 
-  // useEffect(() => {
-  //   axios.get(
-  //     "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents",
-  //   ).then(res => {
-  //     console.log('successfully get response in incident form')
-  //     console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
-  //     setresponses(res.data.data)
-  //     setcustomer(responses[0]?.Customer)
-  //     // console.log("Customer namessss",customer)
-  //     // setdata(res.data.data.Customer.name)
-  //   }).catch(e => {
-  //     console.log('error')
-  //     console.log(e.response.data)
-  //   })
-  // }, [])
+          let siteResponse=await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/sites`)
+          if(siteResponse.data.data)
+          {
+            let siteid = siteResponse.data.data
+            setSiteId(siteid)
+            console.log("Site ids",siteid)
+          }
 
-  const [text, onChangeText] = React.useState('Full Name');
-  const [names, onChangeName] = React.useState('');
-  const [entry, onChangeentry] = React.useState('');
-  const [submission, onChangeSubmission] = React.useState('');
+          // setcopy(customers)
+      } else {
+          console.log(3)
+      }
+      console.log(4)
+  })()
+  }, [])
+
+  
+  const [employeeid,setemployeeid]=useState('')
+  const [cust,setcust]=useState({})
+  const [custId,setcustId]=useState('')
+  const [siteid,setSiteid]=useState('')
+  const [sitename,setsitename]=useState('')
   const [fname, onChangefname] = React.useState('');
   const [reqaction, onChangereqaction] = React.useState('');
   const [reqAction, onChangereqAction] = React.useState('');
@@ -52,6 +68,20 @@ function IncidentForm({ navigation }) {
   const [file, onchangeFile] = useState('');
   const [video, onchangeVideo] = useState('')
   const [isPopup, setPopup] = useState(false);
+  const [siteId,setSiteId]=useState('')
+  console.log("Customer=======",cust)
+  console.log("CustomerId is",custId)
+  
+  const site=siteId?siteId.map((item,index)=>(
+      {label:item?.name,value:item?.id}
+  )):null
+
+  const customers=customer?customer.map((item,index)=>(
+    {label:item?.name,value:item?.id}
+)):null
+
+  // const data=''
+  console.log("**********************",siteId)
   console.log("video url got in incidentform", video)
   console.log("document url got in incidentform", file)
   console.log("file uri", file)
@@ -59,13 +89,7 @@ function IncidentForm({ navigation }) {
 
   console.log("Customer name", responses[0]?.Customer)
   console.log(customer)
-  // const custdetails=customer.map((index)=>{index.name,index.id})
-
-  // const data=[
-  //   {label: customer?.name, value: '1'},
-  // ]
-
-  // {console.log("in incident form",data)}
+ 
 
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
@@ -105,15 +129,26 @@ function IncidentForm({ navigation }) {
     {
       return showError("Description should be between 3 to 1000 characters")
     }
-
+    // axios.get(
+    //           `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
+    //       ).then(res => {
+    //           console.log('successfully get response')
+    //           console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+    //           setresponses(res?.data?.data)
+    //           setcopy(res.data.data)
+    //           unavailCtx.setData(res?.data?.data)
+    //       }).catch(e => {
+    //           console.log('error')
+    //           console.log(e.response.data)
+    //       })
 
     axios.post(
       "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
       {
-        customerId:23,
-        employeeId:5,
-        siteId:5,
-        status:"pending",
+        customerId:custId,
+        employeeId:employeeid,
+        siteId:siteid,
+        status:"pending",  
         formName:fname
       }
     ).then(res => {
@@ -146,7 +181,10 @@ function IncidentForm({ navigation }) {
         <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%', marginTop: "20%" }}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns width={Dimensions.get('window').width - 40} ph={"Name"} data={customer} />
+            <Dropdowns width={Dimensions.get('window').width - 40} ph={"Name"} data={customers} onchange={(custom,id)=>{
+              setcust(custom);
+              setcustId(id);
+            }}/>
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -156,7 +194,11 @@ function IncidentForm({ navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns width={Dimensions.get('window').width - 40} ph={"Select Site"} />
+              <Dropdowns width={Dimensions.get('window').width - 40} ph={"Select Site"} data={site} onchange={(custom,id)=>{
+              setsitename(custom);
+              setSiteid(id);
+            }}
+              />
             </View>
             {/* <CustomInput
               value={entry}

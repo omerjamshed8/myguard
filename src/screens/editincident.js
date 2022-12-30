@@ -22,31 +22,54 @@ import validator from 'validator';
 import { showError } from 'utils/toast';
 import useUser from 'hooks/useUser';
 
-function EditIncident({route, navigation }) {
-  const { getUserFullName,getUserID, getUserImage, getUserEmail, user } = useUser();
-  const userid=getUserID()
+function EditIncident({ route, navigation }) {
+  const { getUserFullName, getUserID, getUserImage, getUserEmail, user } = useUser();
+  const userId = getUserID()
+
   useEffect(() => {
-    axios.get(
-      `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
-    ).then(res => {
-      console.log('successfully get response in incident form')
-      console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
-      setresponses(res.data.data)
-      setcustomer(responses[0]?.Customer)
-      // console.log("Customer namessss",customer)
-      // setdata(res.data.data.Customer.name)
-    }).catch(e => {
-      console.log('error')
-      console.log(e.response.data)
-    })
+    // axios.get(
+    //   `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
+    // ).then(res => {
+    //   console.log('successfully get response in incident form')
+    //   console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
+    //   setresponses(res.data.data)
+    //   setcustomer(responses[0]?.Customer)
+    //   // console.log("Customer namessss",customer)
+    //   // setdata(res.data.data.Customer.name)
+    // }).catch(e => {
+    //   console.log('error')
+    //   console.log(e.response.data)
+    // })
+    (async () => {
+      let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userId}`)
+      console.log(1)
+      if(employeeResponse.data.employee) {
+          console.log(2)
+          let employee = employeeResponse.data.employee
+          
+          let customerResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/customers`)
+          let customers = customerResponse.data.data
+          setcustomer(customers)
+
+          let siteResponse=await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/sites`)
+          if(siteResponse.data.data)
+          {
+            let siteid = siteResponse.data.data
+            setSiteId(siteid)
+            console.log("Site ids",siteid)
+          }
+
+          // setcopy(customers)
+      } else {
+          console.log(3)
+      }
+      console.log(4)
+  })()
   }, [])
 
-  const {props}=route.params;
-  console.log("Props in editincident",props)
-  const [text, onChangeText] = React.useState('Full Name');
-  const [names, onChangeName] = React.useState('');
-  const [entry, onChangeentry] = React.useState('');
-  const [submission, onChangeSubmission] = React.useState('');
+  const { props } = route.params;
+  console.log("Props in editincident", props)
+
   const [fname, onChangefname] = React.useState(props?.formName);
   const [reqaction, onChangereqaction] = React.useState(props?.requiredAction);
   const [reqAction, onChangereqAction] = React.useState('');
@@ -56,12 +79,26 @@ function EditIncident({route, navigation }) {
   const [file, onchangeFile] = useState('');
   const [video, onchangeVideo] = useState('')
   const [isPopup, setPopup] = useState(false);
+  const [siteid, setSiteId] = useState('')
+
+  const site = siteid ? siteid.map((item, index) => (
+    { label: item?.name, value: item?.id }
+  )) : null
+
+  const customers = customer ? customer.map((item, index) => (
+    { label: item?.name, value: item?.id }
+  )) : null
+
   console.log("video url got in incidentform", video)
   console.log("document url got in incidentform", file)
   console.log("file uri", file)
   console.log("video uri", video)
 
   console.log("Customer name", responses[0]?.Customer)
+  console.log("customer id", props.Customer.id)
+  console.log("Employeeid", props.Employee.id)
+  console.log("SiteId", props.Site.id)
+
   console.log(customer)
   // const custdetails=customer.map((index)=>{index.name,index.id})
 
@@ -74,40 +111,31 @@ function EditIncident({route, navigation }) {
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
 
-    if(validator.isEmpty(fname))
-    {
+    if (validator.isEmpty(fname)) {
       return showError("Form name is required")
     }
-    else if(!validator.isAlpha(fname))
-    {
+    else if (!validator.isAlpha(fname)) {
       return showError("Form name should be in alphabetical form")
     }
-    else if(!validator.isLength(fname,3,50))
-    {
+    else if (!validator.isLength(fname, 3, 50)) {
       return showError("Form name should be between 3 to 50 alphabets")
     }
-    else if(validator.isEmpty(reqaction))
-    {
+    else if (validator.isEmpty(reqaction)) {
       return showError("Action is required")
     }
-    else if(!validator.isAlpha(reqaction))
-    {
+    else if (!validator.isAlpha(reqaction)) {
       return showError("Required Action should be in alphabetical form")
     }
-    else if(!validator.isLength(reqaction,3,50))
-    {
+    else if (!validator.isLength(reqaction, 3, 50)) {
       return showError("Required Action should be between 3 to 50 alphabets")
     }
-    else if(validator.isEmpty(desc))
-    {
+    else if (validator.isEmpty(desc)) {
       return showError("Description is required")
     }
-    else if(!validator.isAlphanumeric(desc))
-    {
+    else if (!validator.isAlphanumeric(desc)) {
       return showError("Description should be in alphabetical form")
     }
-    else if(!validator.isLength(desc,3,1000))
-    {
+    else if (!validator.isLength(desc, 3, 1000)) {
       return showError("Description should be between 3 to 1000 characters")
     }
 
@@ -115,20 +143,20 @@ function EditIncident({route, navigation }) {
     axios.put(
       `https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/${props.id}`,
       {
-        customerId:23,
-        employeeId:5,
-        siteId:5,
-        status:"pending",
-        formName:fname,
-        requiredAction:reqAction,
-        description:desc,
+        customerId: props.Customer.id,
+        employeeId: props.Employee.id,
+        siteId: props.Site.id,
+        status: "pending",
+        formName: fname,
+        requiredAction: reqaction,
+        description: desc,
       }
     ).then(res => {
       if (res?.status === 200) {
         setPopup(true)
       }
-    console.log('updated successfully')
-    console.log(res)
+      console.log('updated successfully')
+      console.log(res)
       console.log('success')
       console.log(res)
     }).catch(e => {
@@ -144,7 +172,7 @@ function EditIncident({route, navigation }) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        >
+      >
 
         {/* <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
@@ -153,7 +181,7 @@ function EditIncident({route, navigation }) {
         <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%', marginTop: "20%" }}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns width={Dimensions.get('window').width - 40} ph={"Name"} data={customer} />
+            <Dropdowns width={Dimensions.get('window').width - 40} ph={props?.Customer?.name} data={customers} />
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -163,7 +191,7 @@ function EditIncident({route, navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns width={Dimensions.get('window').width - 40} ph={"Select Site"} />
+              <Dropdowns width={Dimensions.get('window').width - 40} ph={props?.Site?.name} data={site} />
             </View>
             {/* <CustomInput
               value={entry}
@@ -214,7 +242,7 @@ function EditIncident({route, navigation }) {
               inputType={'multiline'}
             /> */}
             <TextInput
-            value={desc}
+              value={desc}
               style={styles.inputs}
               placeholder="Type here..."
               onChangeText={onChangedesc}
@@ -227,31 +255,31 @@ function EditIncident({route, navigation }) {
         </View>
 
         <View>
-          <ImageUploadd 
-            onChangeFile={(files) => { onchangeFile(files) }}  
+          <ImageUploadd
+            onChangeFile={(files) => { onchangeFile(files) }}
             onChangeVideo={
-              (video) => {  
-              console.log('*********************')
-              console.log(video)
-              console.log('hitting api')
-              console.log('*********************') 
-              onchangeVideo(video.uri); 
-              const fd = new FormData()
-              fd.append('video', "Hello")
-              axios({
-                method: "post",
-                url: "https://securitylinksapi.herokuapp.com/api/v1/mp-routes/upload/video",
-                data: fd,
-                headers: { "Content-Type": "multipart/form-data" },
-              }).then(res => { 
-                console.log('&&&&&&&&& success') 
-                console.log(res)
-              }).catch(e => {
-                console.log('^^^^^ error') 
-                console.log(e.response.data)  
-              })
+              (video) => {
+                console.log('*********************')
+                console.log(video)
+                console.log('hitting api')
+                console.log('*********************')
+                onchangeVideo(video.uri);
+                const fd = new FormData()
+                fd.append('video', "Hello")
+                axios({
+                  method: "post",
+                  url: "https://securitylinksapi.herokuapp.com/api/v1/mp-routes/upload/video",
+                  data: fd,
+                  headers: { "Content-Type": "multipart/form-data" },
+                }).then(res => {
+                  console.log('&&&&&&&&& success')
+                  console.log(res)
+                }).catch(e => {
+                  console.log('^^^^^ error')
+                  console.log(e.response.data)
+                })
+              }
             }
-          }  
           />
         </View>
 
@@ -273,17 +301,17 @@ function EditIncident({route, navigation }) {
         </View>
 
         <CommonModal
-                    isVisible={isPopup}
-                    component={
-                        <ResetSuccess
-                            title={'Incident edited successfully.'}
-                            onDone={() => {
-                                setPopup(false);
-                                navigation.goBack();
-                            }}
-                        />
-                    }
-                />
+          isVisible={isPopup}
+          component={
+            <ResetSuccess
+              title={'Incident edited successfully.'}
+              onDone={() => {
+                setPopup(false);
+                navigation.goBack();
+              }}
+            />
+          }
+        />
         <View>
           <Text>{'\n'}</Text>
         </View>

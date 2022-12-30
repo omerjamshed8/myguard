@@ -1,3 +1,4 @@
+import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import { DocsContext } from "contexts/DocsContext";
 import React, { useContext } from "react";
@@ -12,7 +13,6 @@ export default function Document({ navigation }) {
     const [data, setdata] = useState()
 
     var createdat;
-    var expirydate;
 
     const docsCtx = useContext(DocsContext);
     console.log("Data consoled in documents of docsContext", docsCtx.data)
@@ -33,22 +33,26 @@ export default function Document({ navigation }) {
         { label: "10", value: '10' },
     ]
 
+    const isFocused=useIsFocused()
     useEffect(() => {
-        axios.get(
-            "https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs",
-        ).then(res => {
-            console.log('successfully get response in documents')
-            console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
-            setresponses(res?.data?.data)
-            setdata(res?.data?.data)
-            docsCtx.setData(res?.data?.data)
-            // createdat=res?.data?.data?.createdAt
-            // expirydate=res?.data?.data?.expiryDate
-        }).catch(e => {
-            console.log('error')
-            console.log(e.response.data)
-        })
-    }, [])
+        if(isFocused)
+        {
+            axios.get(
+                "https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs",
+            ).then(res => {
+                console.log('successfully get response in documents')
+                console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+                setresponses(res?.data?.data)
+                setdata(res?.data?.data)
+                docsCtx.setData(res?.data?.data)
+                // createdat=res?.data?.data?.createdAt
+                // expirydate=res?.data?.data?.expiryDate
+            }).catch(e => {
+                console.log('error')
+                console.log(e.response.data)
+            })
+        }
+    }, [isFocused])
     const Card = () => {
     }
 
@@ -59,7 +63,6 @@ export default function Document({ navigation }) {
     const dateconverter = (date) => {
         createdat = new Date(date)
         newdate=createdat.getFullYear() + ' ' + (createdat.getMonth() + 1) + ' ' + createdat.getDate()
-        console.log("created at",newdate)
         return newdate
     }
 

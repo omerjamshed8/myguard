@@ -32,24 +32,42 @@ import { UnavailContext } from 'contexts/UnavailContext';
 // import Countryinput from './dropdownphone';
 import Axios from 'axios';
 import Dropdowns from './view-profile/dropdownpicker';
+import { useEffect } from 'react';
+import axios from 'axios';
 
 const Context = createContext();
 const UnavailForm = ({ navigation }) => {
-    const { getUserFullName, getUserImage, getUserEmail, user } = useUser();
+    const { getUserFullName, getUserImage, getUserEmail,getUserID, getEmployeeId, user } = useUser();
     const unavailCtx = useContext(UnavailContext)
     const [title, settitle] = useState('');
     const [type, settype] = useState('');
     const [note, setnote] = useState('');
-    const [status, onChangestatus] = useState(user?.UserProfile?.status)
-    const [startdate, onChangestartdate] = useState(user?.UserProfile?.startdate)
-    const [enddate, onChangeenddate] = useState(user?.UserProfile?.enddate)
+    const [status, onChangestatus] = useState('')
+    const [startdate, onChangestartdate] = useState('')
+    const [enddate, onChangeenddate] = useState('')
     console.log("type::::::", type);
     console.log("status::::::", status);
+    let userID=getUserID()
+    useEffect(() => {
+        (async () => {
+            let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+            console.log(1)
+            if (employeeResponse.data.employee) {
+                console.log(2)
+                let employee = employeeResponse.data.employee
+                setemployeeid(employee.id)
+            } else {
+                console.log(3)
+            }
+            console.log(4)
+        })()
+    }, [])
 
     const [isPicker, setPicker] = useState(false);
     const [image, setImage] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
+    const [empid, setemployeeid] = useState('')
 
     const arr = [title, type, status, note]
 
@@ -71,12 +89,10 @@ const UnavailForm = ({ navigation }) => {
         if (validator.isEmpty(title)) {
             return showError("Title should not be empty")
         }
-        else if(!validator.isAlpha(title))
-        {
+        else if (!validator.isAlpha(title)) {
             return showError("Title should be in alphabets")
         }
-        else if(!validator.isLength(title,3,20))
-        {
+        else if (!validator.isLength(title, 3, 20)) {
             return showError("Title should be between 3 to 20 characters")
         }
         else if (validator.isEmpty(type)) {
@@ -94,26 +110,25 @@ const UnavailForm = ({ navigation }) => {
         else if (validator.isEmpty(note)) {
             return showError("Note is required")
         }
-        else
-        {
+        else {
             console.log('*****************')
             console.log('clicked')
             //api k liye set data ka function use krna hai
             unavailCtx.add({
-                title:title,
-                note:note,
-                type:type,
-                status:status,
-                startDate:startdate,
-                endDate:enddate 
+                title: title,
+                note: note,
+                type: type,
+                status: status,
+                startDate: startdate,
+                endDate: enddate
             })
-            console.log(title,note,type,status,startdate,enddate)
-    
+            console.log(title, note, type, status, startdate, enddate)
+
             console.log(startdate)
-    
-    
+
+
             Axios.post(
-                "https://securitylinksapi.herokuapp.com/api/v1/employee/13/unavails/create",
+                `https://securitylinksapi.herokuapp.com/api/v1/employee/${empid}/unavails/create`,
                 {
                     title: title,
                     type: type,

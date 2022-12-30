@@ -43,7 +43,7 @@ function EditDocument({ route, navigation }) {
     const [reqaction, onChangereqaction] = React.useState('');
     const [reqAction, onChangereqAction] = React.useState('');
     const [desc, onChangedesc] = React.useState(null);
-    const [note, setnote] = useState(props.Document.note);
+    const [note, setnote] = useState(props?.Document?.note);
     const [file, setfile] = useState([]);
     const [pressed, setpressed] = useState(false)
     const [date, setdate] = useState(props.Document.expiryDate ? props.Document.expiryDate : '')
@@ -51,13 +51,8 @@ function EditDocument({ route, navigation }) {
     const [isPopup, setPopup] = useState(false);
 
 
-
-    console.log("DDDDDAAAATTTTEEEEE", date)
-    console.log("Document type in edit document", props.Document.type)
-
     console.log(pressed)
     console.log("response file", file[0]?.uri)
-    console.log(props.id)
     //   const clickhandler = () => {
     //     navigation.navigate('CreateEmployee');
     //   };
@@ -88,7 +83,7 @@ function EditDocument({ route, navigation }) {
         else {
             setsucced(true)
             axios.put(
-                `https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs/${props.id}`,
+                `https://securitylinksapi.herokuapp.com/api/v1/employee/${props.employeeId}/docs/${props.id}`,
                 {
                     name: names,
                     type: entry,

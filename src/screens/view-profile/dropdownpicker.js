@@ -21,8 +21,6 @@ const Dropdowns = ({ navigation, ph, disable, width, bgcolor, phcolor, initialty
     { label: 'Sindh', value: 2 },
   ]);
 
-  console.log("initialtype",initialtype);
-
   function onSelect(item) {
     // console.log(item);
     let Arr = [];
@@ -69,7 +67,7 @@ const Dropdowns = ({ navigation, ph, disable, width, bgcolor, phcolor, initialty
               console.log(item.value);
               setValue(item.label);
               if (typeof onchange === 'function') {
-                onchange(item.label)
+                onchange(item.label,item.value)
               }
             }}
             renderItem={renderItem}

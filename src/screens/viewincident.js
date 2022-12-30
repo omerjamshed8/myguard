@@ -16,40 +16,13 @@ import { Colors, Fonts, Images } from 'theme';
 import Dropdowns from './view-profile/dropdownpicker';
 import ImageUploadd from './imageuploader';
 import axios from 'axios';
-import CommonModal from 'components/common-modal';
-import ResetSuccess from 'components/reset-success';
 
-function ViewIncident({route, navigation }) {
+function ViewIncident({ route, navigation }) {
 
-    const { props } = route.params;
-    console.log("Props in ViewIncident", props)
-    console.log("props id", props?.Customer?.name)
+  const { props } = route.params;
+  console.log("Props in ViewIncident", props)
+  console.log("props id", props?.Customer?.name)
 
-  useEffect(() => {
-    axios.get(
-      "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents",
-    ).then(res => {
-      console.log('successfully get response in incident form')
-      console.log("!!!!!!!!!>>>>>>>>>" + JSON.stringify(res.data.data))
-      setresponses(res.data.data)
-      setcustomer(responses[0]?.Customer)
-      // console.log("Customer namessss",customer)
-      // setdata(res.data.data.Customer.name)
-    }).catch(e => {
-      console.log('error')
-      console.log(e.response.data)
-    })
-  }, [])
-
-  const [text, onChangeText] = React.useState('Full Name');
-  const [names, onChangeName] = React.useState('');
-  const [entry, onChangeentry] = React.useState('');
-  const [submission, onChangeSubmission] = React.useState('');
-  const [fname, onChangefname] = React.useState('');
-  const [reqaction, onChangereqaction] = React.useState('');
-  const [reqAction, onChangereqAction] = React.useState('');
-  const [desc, onChangedesc] = React.useState(null);
-  const [responses, setresponses] = useState([])
   const [customer, setcustomer] = useState();
   const [file, onchangeFile] = useState();
   const [video, onchangeVideo] = useState()
@@ -58,42 +31,7 @@ function ViewIncident({route, navigation }) {
   console.log("document url got in incidentform", file)
   console.log("file uri", file)
   console.log("video uri", video)
-
-  console.log("Customer name", responses[0]?.Customer)
   console.log(customer)
-  // const custdetails=customer.map((index)=>{index.name,index.id})
-
-  // const data=[
-  //   {label: customer?.name, value: '1'},
-  // ]
-
-  // {console.log("in incident form",data)}
-
-  const clickhandler = () => {
-    // navigation.navigate('CreateEmployee');
-    axios.post(
-      "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
-      {
-        customerId:23,
-        employeeId:5,
-        siteId:5,
-        status:"pending",
-        formName:"omer"
-      }
-    ).then(res => {
-      if (res?.status === 200) {
-        setPopup(true)
-      }
-    console.log('updated successfully')
-    console.log(res)
-      console.log('success')
-      console.log(res)
-    }).catch(e => {
-      console.log('error')
-      console.log(e.response.data)
-    })
-
-  };
 
   return (
     <SafeAreaView style={styles.splashView}>
@@ -101,16 +39,16 @@ function ViewIncident({route, navigation }) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        >
+      >
 
         {/* <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
             </View> */}
         {/* Input Wrapper */}
-        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%'}}>
+        <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%' }}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={"Name"} data={customer} />
+            <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={props?.Customer?.name} data={customer} />
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -120,7 +58,7 @@ function ViewIncident({route, navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={"Select Site"} />
+              <Dropdowns disable={true} width={Dimensions.get('window').width - 40} ph={props?.Site?.name} />
             </View>
             {/* <CustomInput
               value={entry}
@@ -140,18 +78,16 @@ function ViewIncident({route, navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Form Name</Text>
             <CustomInput
-              value={fname}
+              value={props?.formName}
               placeholder="Name"
-              onChangeText={onChangefname}
               placeholderTextColor={'black'}
               editable={false}
             />
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Required Action</Text>
             <CustomInput
-              value={reqaction}
+              value={props?.requiredAction}
               placeholder="Name"
-              onChangeText={onChangereqaction}
               placeholderTextColor={'black'}
               editable={false}
             />
@@ -173,9 +109,9 @@ function ViewIncident({route, navigation }) {
               inputType={'multiline'}
             /> */}
             <TextInput
+              value={props?.description}
               style={styles.inputs}
               placeholder="Type here..."
-              onChangeText={onChangedesc}
               placeholderTextColor={'black'}
               multiline={true}
               numberOfLines={4}

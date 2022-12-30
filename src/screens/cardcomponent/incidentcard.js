@@ -6,6 +6,7 @@ import { useContext } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView, SafeAreaView, StyleSheet, Dimensions } from 'react-native';
 import { Context } from 'screens/unavailform';
 import Dropdowns from "screens/view-profile/dropdownpicker";
+import { Fonts } from "theme";
 import fonts from "theme/fonts";
 
 export default function UnavailabilityCard({ navigation }) {
@@ -58,12 +59,17 @@ export default function UnavailabilityCard({ navigation }) {
         }
     }
 
-    const filterstatus=()=>{
+    const filterstatus=(label)=>{
         console.log("*************",label)
         const arr=responses.filter((item)=>item.status===label.toLowerCase())
         // const arr=responses;
         console.log("/////////////////",arr)
         setcopy(arr)
+    }
+    const dateconverter = (date) => {
+        createdat = new Date(date)
+        newdate=createdat.getFullYear() + '-' + (createdat.getMonth() + 1) + '-' + createdat.getDate()
+        return newdate
     }
 
     return (
@@ -77,24 +83,25 @@ export default function UnavailabilityCard({ navigation }) {
             <View style={{justifyContent:'center',marginTop:-24}}>
             <Dropdowns width={Dimensions.get('window').width} bgcolor="#F2385F" ph={"All"} phcolor={"white"} borderradius={-1} data={datas}
                 onchange={(label)=>{
-                    setLabel(label)
-                    filterstatus()
+                    // setLabel(label)
+                    filterstatus(label)
                 }}
             />
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 {
                     copy ? copy.map((item,index) => (
-                        <View key={index} style={[styles.container, { borderRadius: 10, borderWidth: 1.5, width: "98%", marginTop: "5%" }]}>
+                        //height mein view mein nai thi aur pehly text waly view mein 100% thi
+                        <View key={index} style={[styles.container, { borderRadius: 10, borderWidth: 1.5,height:130, width: "98%", marginTop: "5%",justifyContent:"center",alignItems:"center" }]}>
                             <View style={{ flexDirection: 'row' }}>
-                                <View style={{backgroundColor: getColor(item), width: "35%", height: "100%", justifyContent: 'center', borderRadius: 6, left: 0 }}>
-                                    <Text style={{ color: 'white', paddingHorizontal: 30, fontWeight: '600', textAlign: "center" }}>{item.status}</Text>
+                                <View style={{backgroundColor: getColor(item), width: "35%", height: 128, justifyContent: 'center', borderRadius: 6, left: 0 }}>
+                                    <Text style={{ color: 'white', paddingHorizontal: 20, textAlign: "center",fontFamily:Fonts.Poppins.Bold }}>{item.status}</Text>
                                 </View>
-                                <Text style={[styles.tex, { paddingLeft: "5%" }]}>
-                                    <Text style={{ color: '#2A2D43', fontSize: 14, fontWeight: '500' }}>{item.Customer.name} {'\n'}</Text>
-                                    <Text style={{ color: '#2A2D43', fontStyle: 'italic' }}>{item.Customer.locationId} {'\n'}</Text>
-                                    <Text style={{ color: '#2A2D43', fontSize: 12 }}>{item.Customer.createdAt} {'\n'}</Text>
-                                    <Text style={{ color: '#2A2D43', fontSize: 14, fontWeight: '500' }}>{item.type} {'\n'}</Text>
+                                <Text style={[styles.tex, { paddingLeft: "5%",alignItems:"center" }]}>
+                                    <Text style={{ color: '#2A2D43', fontSize: 14,fontFamily:fonts.Poppins.Medium }}>{item.Customer.name} {'\n'}</Text>
+                                    <Text style={{ color: '#2A2D43', fontStyle: 'italic',fontFamily:fonts.Poppins.SemiBold }}>{item.Customer.locationId} {'\n'}</Text>
+                                    <Text style={{ color: '#2A2D43', fontSize: 12,fontFamily:fonts.Poppins.Medium }}>{dateconverter(item.Customer.createdAt)} {'\n'}</Text>
+                                    <Text style={{ color: '#2A2D43', fontSize: 16, fontWeight: '500' }}>{item.type} {'\n'}</Text>
                                 </Text>
                                 <View style={{ flexDirection: "row", position: "absolute", right: 10, top: 15 }}>
                                     <TouchableOpacity onPress={()=>{
@@ -164,7 +171,7 @@ const styles = StyleSheet.create({
     },
     tex: {
         color: 'black',
-        marginTop: '4%',
+        marginTop: '12%',
         width: "65%"
     }
 })

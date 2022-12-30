@@ -31,9 +31,27 @@ import { useContext } from 'react';
 import { UnavailContext } from 'contexts/UnavailContext';
 import Axios from 'axios';
 import Dropdowns from './view-profile/dropdownpicker';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 const Context = createContext();
 const EditUnavail = ({ route,navigation }) => {
+    const {getUserID}=useUser()
+    const userID=getUserID()
+    useEffect(() => {
+        (async () => {
+            let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+            console.log(1)
+            if (employeeResponse.data.employee) {
+                console.log(2)
+                let employee = employeeResponse.data.employee
+                setemployeeid(employee.id)
+            } else {
+                console.log(3)
+            }
+            console.log(4)
+        })()
+    }, [])
 
     const {props}=route.params;
     console.log("Props in EditUnavail",props)
@@ -47,6 +65,7 @@ const EditUnavail = ({ route,navigation }) => {
     const [status, onChangestatus] = useState(props?.status)
     const [startdate, onChangestartdate] = useState(props?.startDate)
     const [enddate, onChangeenddate] = useState(props?.endDate)
+    const [employeeid,setemployeeid]=useState('')
     console.log("type::::::",type);
     console.log("status::::::",status);
 
@@ -116,7 +135,7 @@ const EditUnavail = ({ route,navigation }) => {
         console.log(startdate)
         setPopup(true)
         Axios.put(
-            `https://securitylinksapi.herokuapp.com/api/v1/employee/13/unavails/${props.id}`,
+            `https://securitylinksapi.herokuapp.com/api/v1/employee/${employeeid}/unavails/${props.id}`,
             {
                 title: title,
                 type: type,
@@ -153,13 +172,13 @@ const EditUnavail = ({ route,navigation }) => {
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Type</Text>
                 <View style={styles.postalCodeWrapper}>
-                <Dropdowns width={"200%"} ph={'Select Type'} data={types} initialtype={type} onchange={valuee => {
+                <Dropdowns width={"200%"} ph={props?.type} data={types} initialtype={type} onchange={valuee => {
                         settype(valuee)
                 }}/>
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Status</Text>
                 <View style={styles.postalCodeWrapper}>
-                   <Dropdowns width={"200%"} ph={'Select Status'} disable={true} initialtype={status} data={data} onchange={valueee => {
+                   <Dropdowns width={"200%"} ph={props?.status} disable={true} initialtype={status} data={data} onchange={valueee => {
                         onChangestatus(valueee)
                    }}/>
                 </View>

@@ -87,22 +87,31 @@ const ViewEditProfile = ({ navigation, edit }) => {
     //     }
     // })
 
+    const selectedCountry = Countries.find(item => item.country === country)
+    console.log('selectedCountry')
+    console.log(selectedCountry)
+    let states = []
+    if(selectedCountry) {
+        states = selectedCountry.states.map((state, index) => ({label: state, value: index.toString()}))
+    }
+    console.log(states)
 
-
-    const states = Countries.filter((item) => {
-        if (item.country === country) {
-            return { label: item.states }
-        }
-    })
+    // const states = Countries.filter((item) => {
+    //     if (item.country === country) {
+    //         console.log(item)
+    //         return item
+    //     }
+    // })
+    // console.log(states)
     // console.log("************states****************");
-    states.forEach(element => {
-        console.log(element)
-    });
+    // states.forEach(element => {
+    //     console.log(element)
+    // });
 
-    const selstates = states.map((item, index) => { return { label: item.states, value: index } })
-    selstates.forEach(element => {
-        console.log("selstate", element)
-    });
+    // const selstates = states.map((item, index) => { return { label: item.states, value: index } })
+    // selstates.forEach(element => {
+    //     console.log("selstate", element)
+    // });
 
     const onClosePicker = () => setPicker(false);
 
@@ -293,7 +302,7 @@ const ViewEditProfile = ({ navigation, edit }) => {
                     {/* for state */}
 
                     <Dropdowns ph={'State'} data={states} onchange={(statee) => {
-                        onChangestate(selstates)
+                        onChangestate(statee)
                     }} />
                     <Dropdowns ph={'Country'} data={countries} onchange={(countryy) => {
                         onChangecountry(countryy)

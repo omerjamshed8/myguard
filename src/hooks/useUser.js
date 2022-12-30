@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { apiRootLive } from 'services';
 import images from 'theme/images';
@@ -17,6 +18,21 @@ const useUser = () => {
   const getUserPhone=()=>user?.phone??'';
   const getUserEmail = () => user?.email ?? '';
   const getUserID = () => user?.id ?? '';
+
+  // const userId=getUserID();
+
+  // const getEmployeeId=async()=>{
+  //   let empId=await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${userId}`)
+  //   console.log("***********",empId)
+  //   if(empId.data.employee) {
+  //     let employee = empId.data.employee
+  //     return employee.id;
+  //   }
+  //   else
+  //   {
+  //     return null;
+  //   }
+  // }
 
   return { getUserImage, getUserFullName,getUserPhone, getUserEmail,getUserID, user };
 };
