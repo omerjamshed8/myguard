@@ -62,7 +62,8 @@ export default function Document({ navigation }) {
     var newdate;
     const dateconverter = (date) => {
         createdat = new Date(date)
-        newdate=createdat.getFullYear() + ' ' + (createdat.getMonth() + 1) + ' ' + createdat.getDate()
+        var month = createdat.toLocaleString('default', { month: 'short' });
+        newdate=createdat.getFullYear() + ' ' + month + ' ' + createdat.getDate()          //createdat.getMonth() + 1
         return newdate
     }
 
@@ -72,9 +73,9 @@ export default function Document({ navigation }) {
             <ScrollView showsVerticalScrollIndicator={false}>
                 {
                     docsCtx.data ? docsCtx.data.map((item, index) => (    //pehlay responses tha yahan
-                        <View key={index} style={{ height: "auto", width: "95%", borderWidth: 1.5, borderRadius: 10, margin: 10, marginBottom: 10 }}>
+                        <View key={index} style={{ height: "auto", width: "100%", borderWidth: 1.5, borderRadius: 10, marginTop: '3%' }}>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{ padding: 20, width: '50%', height: "auto", fontSize: 17, color: '#2A2D43', fontFamily: fonts.Poppins.Medium }}>
+                                <Text style={{ padding: "3%", width: '60%', height: "auto", fontSize: 17, color: '#2A2D43', fontFamily: fonts.Poppins.Medium }}>
                                     {item?.Document?.name}
                                     <Text style={{ fontSize: 12, color: '#2A2D43', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular }}>
                                         {'\n'}
@@ -86,31 +87,33 @@ export default function Document({ navigation }) {
                                         Date Expire: {dateconverter(item?.Document?.expiryDate)}
                                         {'\n'}
                                     </Text>
-                                    <Text style={{ color: '#2A2D43', fontFamily: 'Poppins', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular, fontSize: 13 }}>
-                                        Renewal Period
-                                    </Text>
-                                    <View>
-                                        <Dropdowns data={datas} />
+                                    <View style={{flexDirection:"row"}}>
+                                        <Text style={{ color: '#2A2D43', fontFamily: 'Poppins', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular}}>
+                                            Renewal Period
+                                        </Text>
+                                        <Dropdowns data={datas} disable={true}/>
                                     </View>
+                                    {/* <View> */}
+                                    {/* </View> */}
                                 </Text>
-                                <View style={{ flexDirection: 'row' }}>
+                                <View style={{ flexDirection: 'row',padding:4 }}>
                                     <TouchableOpacity onPress={() => {
                                         navigation.navigate('ViewDocument', {
                                             props: item
                                         })
-                                    }} style={{ marginTop: 20, marginLeft: 80, padding: 4 }}>
+                                    }} style={{ marginTop: 20, marginLeft: 60 }}>
                                         <Image source={require('../../assets/images/view.png')} style={{ height: 25, width: 25 }} />
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
                                         navigation.navigate('EditDocument', {
                                             props: item
                                         })
-                                    }} style={{ padding: 4, marginTop: 20, marginLeft: 4 }}>
+                                    }} style={{ marginTop: 20, marginLeft: 4 }}>
                                         <Image source={require('../../assets/images/Status.png')} style={{ height: 25, width: 25 }} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            <View style={{ position: 'absolute', top: 80, right: 20 }}>
+                            <View style={{ position: 'absolute', top: 100, right: 20 }}>
                                 <TouchableOpacity style={[styles.appButtonContainerLarge, { borderColor: '#F2385F' }]} onPress={clickhandler}>
                                     <Text style={[styles.appButtonTextLarge, { paddingHorizontal: 15, paddingVertical: 8 }]}>Expired</Text>
                                 </TouchableOpacity>

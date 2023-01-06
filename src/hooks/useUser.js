@@ -5,6 +5,7 @@ import images from 'theme/images';
 
 const useUser = () => {
   const user = useSelector(state => state.auth.user);
+  const userid=useSelector(state=>state.auth.employeeid)
 
   const getUserImage = () => {
     if (user?.UserProfile?.avatarUrl) {
@@ -18,7 +19,7 @@ const useUser = () => {
   const getUserPhone=()=>user?.phone??'';
   const getUserEmail = () => user?.email ?? '';
   const getUserID = () => user?.id ?? '';
-
+  const getEmployeeid=()=>userid?.id??'';
   // const userId=getUserID();
 
   // const getEmployeeId=async()=>{
@@ -34,7 +35,7 @@ const useUser = () => {
   //   }
   // }
 
-  return { getUserImage, getUserFullName,getUserPhone, getUserEmail,getUserID, user };
+  return { getUserImage, getUserFullName,getUserPhone, getUserEmail,getUserID,getEmployeeid, user };
 };
 
 export default useUser;

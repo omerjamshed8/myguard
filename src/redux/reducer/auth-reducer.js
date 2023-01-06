@@ -6,6 +6,7 @@ const authSlice = createSlice({
     accessToken: null,
     userInfo: null,
     registerData: {},
+    employeeid:'',
   },
   reducers: {
     setUserInfo: (state, action) => {
@@ -23,6 +24,10 @@ const authSlice = createSlice({
       state.user = action?.payload;
     },
 
+    getEmployeeid: (state,action)=>{
+      state.employeeid=action?.payload
+    },
+
     onLogout: (state, action) => {
       state.accessToken = null;
       state.user = null;
@@ -31,7 +36,7 @@ const authSlice = createSlice({
   },
 });
 
-export const {setUserInfo, onLogout, setRegisterData, updateUser} =
+export const {setUserInfo, onLogout, setRegisterData, updateUser,getEmployeeid} =
   authSlice.actions;
 
 export default authSlice.reducer;

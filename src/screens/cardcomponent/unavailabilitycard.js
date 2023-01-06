@@ -111,7 +111,7 @@ export default function UnavailabilityCard({ navigation }) {
         if (item.status.toLowerCase() === 'pending') {
             return '#B90027'
         }
-        else if (item.status.toLowerCase() === 'reject') {
+        else if (item.status.toLowerCase() === 'rejected') {
             return '#FF0D40'
         }
         else if (item.status.toLowerCase() === 'approved') {

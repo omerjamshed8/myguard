@@ -56,7 +56,7 @@ function AddDocument({ navigation }) {
   const [fname, onChangefname] = React.useState('');
   const [reqaction, onChangereqaction] = React.useState('');
   const [reqAction, onChangereqAction] = React.useState('');
-  const [desc, onChangedesc] = React.useState(null);
+  const [desc, onChangedesc] = React.useState('');
   const [note, setnote] = useState('');
   const [file, setfile] = useState([]);
   const [pressed, setpressed] = useState(false)
@@ -82,7 +82,7 @@ function AddDocument({ navigation }) {
       console.log("in validator")
       return showError('Document name is required');
     }
-    else if (!validator.isAlpha(names)) {
+    else if (!validator.isAlpha(names,'en-US',{ignore:' '})) {
       return showError("Title should be in alphabets")
     }
     else if (!validator.isLength(names, 3, 20)) {
@@ -91,7 +91,7 @@ function AddDocument({ navigation }) {
     else if (validator.isEmpty(entry)) {
       return showError("Document type is required")
     }
-    else if (!validator.isAlpha(entry)) {
+    else if (!validator.isAlpha(entry,'en-US',{ignore:' '})) {
       return showError("Type should be in alphabets")
     }
     else if (!validator.isLength(entry, 3, 20)) {
@@ -269,16 +269,16 @@ function AddDocument({ navigation }) {
 
         </View>
 
+        <View style={{ flexDirection: "row", justifyContent: "center",marginTop:20 }}>
         {
           file ? file.map((item, index) => (
-            <View key={index} style={{ flexDirection: "row", justifyContent: "center" }}>
-              <View>
+              <View key={index} style={{paddingHorizontal:10,alignItems:"center"}} >
                 <Image source={require('../assets1/images/PDF.png')} style={{ height: 60, width: 40 }} />
-                <Text style={{ color: 'black' }}>{file[index].name}</Text>
+                <Text style={{ color: 'black',textAlign:"center" }}>{file[index].name}</Text>
               </View>
-            </View>
           )) : null
         }
+        </View>
 
         {
           succed === false ? (

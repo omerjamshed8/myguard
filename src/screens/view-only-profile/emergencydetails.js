@@ -23,27 +23,57 @@ import ResetSuccess from 'components/reset-success';
 import _ from 'lodash';
 import Dropdowns from '../view-profile/dropdownpicker';
 import axios from 'axios';
+import Countries from 'assets1/countries';
+import { useEffect } from 'react';
 
 const ViewEmergencyDetails = ({ navigation }) => {
+
+    const {getUserID}=useUser()
+    const userID=getUserID()
+    useEffect(() => {
+        (async () => {
+            let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+            console.log(1)
+            if (employeeResponse.data.employee) {
+                console.log(2)
+                let employee = employeeResponse.data.employee
+                setemployeeid(employee.id)
+            } else {
+                console.log(3)
+            }
+            console.log(4)
+        })()
+    }, [])
+    const [employeeId,setemployeeid]=useState('')
+
+
     const { user } = useUser();
-    const [emergencydetails, setemergencydetails] = useState(user?.UserProfile?.emergencydetails);
+    const [emergencydetails, setemergencydetails] = useState(user?.UserProfile?.emergencydetails ||'');
     const [emergencynumber, onChangeemergencynumber] = React.useState(user?.UserProfile?.emergencynumber || '');
     const [address, onChangeAddress] = React.useState(
         user?.UserProfile?.address || '',
     );
     const [city, onChangeCity] = React.useState(user?.UserProfile?.city || '');
-    const [state, onChangestate] = React.useState(
-        user?.UserProfile?.state || '',
-    );
+    const [state, onChangestate] = React.useState('');
     const [postalcode, onChangePostalcode] = React.useState(
         user?.UserProfile?.postalCode || '',
     );
 
-    const [country, onChangecountry] = useState(user?.UserProfile?.country);
+    const [country, onChangecountry] = useState('');
     const [isPicker, setPicker] = useState(false);
     const [image, setImage] = useState('');
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
+
+    const countries = Countries.map((item, index) => { return { label: item.country, value: index } })
+    const selectedCountry = Countries.find(item => item.country === country)
+    console.log('selectedCountry')
+    console.log(selectedCountry)
+    let states = []
+    if (selectedCountry) {
+        states = selectedCountry.states.map((state, index) => ({ label: state, value: index.toString() }))
+    }
+    console.log(states)
 
 
     const onClosePicker = () => setPicker(false);
@@ -52,19 +82,17 @@ const ViewEmergencyDetails = ({ navigation }) => {
         Keyboard.dismiss();
         if (validator.isEmpty(emergencydetails)) {
             return showError('Emergency Details is required');
-        }
-        else if (!validator.isLength(emergencydetails, 3, 50)) {
-            return showError('The emergency details should be between 3 to 50 alphabets');
-        } else if (!validator.isAlpha(emergencydetails)) {
+        }else if (!validator.isAlpha(emergencydetails,'en-US',{ignore:''})) {
             return showError('The emergency details should be in alphabetical format');
-        }
-        else if (!validator.isLength(emergencynumber, 7, 15)) {
+        }else if (!validator.isLength(emergencydetails, 3, 50)) {
+            return showError('The emergency details should be between 3 to 50 alphabets');
+        } else if (!validator.isLength(emergencynumber, 7, 15)) {
             return showError('The emergency number should be between 7 to 15 digits');
         } else if (!validator.isNumeric(emergencynumber)) {
             return showError('The emergency number should be in numerical format');
         } else if (validator.isEmpty(address)) {
             return showError('The address is required');
-        } else if (!validator.isAlphanumeric(address)) {
+        } else if (!validator.isAlphanumeric(address,'en-US',{ignore:' ,-#'})) {
             return showError("Address should be in alpha numeric form")
         }
         else if (!validator.isLength(address, 1, 100)) {
@@ -111,10 +139,10 @@ const ViewEmergencyDetails = ({ navigation }) => {
         // }
 
         axios.put(
-            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/13",
+            `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${employeeId}`,
             {
                 emergencyDetails: emergencydetails,
-                emergencynumber: emergencynumber,
+                emergencyNumber: emergencynumber,
                 address: address,
                 country: country,
                 state: state,
@@ -137,7 +165,7 @@ const ViewEmergencyDetails = ({ navigation }) => {
 
     return (
         <Screen>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ marginTop: "30%" }} />
                 <CustomInput
                     value={emergencydetails}
@@ -160,8 +188,12 @@ const ViewEmergencyDetails = ({ navigation }) => {
                 />
 
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={'Country'} />
-                    <Dropdowns ph={'State'} />
+                    <Dropdowns ph={country?country:'Country'} data={countries} onchange={(countryy) => {
+                        onChangecountry(countryy)
+                    }} />
+                    <Dropdowns ph={state?state:'State'} data={states} onchange={(statee) => {
+                        onChangestate(statee)
+                    }} />
                 </View>
                 <View style={styles.postalCodeWrapper}>
                     <CustomInput
@@ -175,6 +207,7 @@ const ViewEmergencyDetails = ({ navigation }) => {
                         value={postalcode}
                         placeholder="Zip/Postal code"
                         onChangeText={onChangePostalcode}
+                        keyboardType={"numeric"}
                     />
                 </View>
                 <View>

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   View,
@@ -7,20 +7,21 @@ import {
   TouchableOpacity,
   Image,
   Keyboard,
+  Dimensions,
 } from 'react-native';
-import {Colors, commonStyle, Fonts, Images} from 'theme';
+import { Colors, commonStyle, Fonts, Images } from 'theme';
 import CustomButton from 'components/custom-button';
-import {showError} from 'utils/toast';
-import {login} from 'services/auth';
+import { showError } from 'utils/toast';
+import { login } from 'services/auth';
 import validator from 'validator';
 import CustomInput from 'components/custom-input';
 import colors from 'theme/colors';
-import {useDispatch} from 'react-redux';
-import {setUserInfo} from 'redux/reducer/auth-reducer';
+import { useDispatch } from 'react-redux';
+import { setUserInfo } from 'redux/reducer/auth-reducer';
 import CommonModal from 'components/common-modal';
 import ResetSuccess from 'components/reset-success';
 
-function SignIn({navigation}) {
+function SignIn({ navigation }) {
   const dispatch = useDispatch();
   const [email, onChangeEmail] = React.useState(
     __DEV__ ? 'emp43@test.com' : '',    //rohit@mailinator.com
@@ -44,16 +45,16 @@ function SignIn({navigation}) {
     if (validator.isEmpty(password)) {
       return showError('The Password is required.');
     }
-      setIsLoading(true);
-      await login({
-        email,
-        password,
-      }).then((res)=>{
-          setIsLoading(false);
-          console.log('response>>>>', res);
-          dispatch(setUserInfo(res));
-          navigation.navigate('AppNav');
-      }).catch ((error) =>{
+    setIsLoading(true);
+    await login({
+      email,
+      password,
+    }).then((res) => {
+      setIsLoading(false);
+      console.log('response>>>>', res);
+      dispatch(setUserInfo(res));
+      navigation.navigate('AppNav');
+    }).catch((error) => {
       setIsLoading(false);
       showError(error?.response?.data?.message || 'Server Error');
     })
@@ -68,7 +69,8 @@ function SignIn({navigation}) {
   };
 
   return (
-    <SafeAreaView style={styles.splashView}>
+    //pehlay safeareaview mein sirf styles mein yeh styles.splashView tha
+    <SafeAreaView style={{width: Dimensions.get('window').width,height: Dimensions.get('window').height-20}}>  
       <View
         style={{
           flex: 1,
@@ -150,7 +152,7 @@ function SignIn({navigation}) {
           />
         }
       />
-    </SafeAreaView>
+    </SafeAreaView >
   );
 }
 

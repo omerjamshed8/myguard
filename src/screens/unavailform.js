@@ -89,7 +89,7 @@ const UnavailForm = ({ navigation }) => {
         if (validator.isEmpty(title)) {
             return showError("Title should not be empty")
         }
-        else if (!validator.isAlpha(title)) {
+        else if (!validator.isAlpha(title,'en-US',{ignore:' '})) {
             return showError("Title should be in alphabets")
         }
         else if (!validator.isLength(title, 3, 20)) {
@@ -98,9 +98,9 @@ const UnavailForm = ({ navigation }) => {
         else if (validator.isEmpty(type)) {
             return showError("Type is required")
         }
-        else if (validator.isEmpty(status)) {
-            return showError("Status is required")
-        }
+        // else if (validator.isEmpty(status)) {
+        //     return showError("Status is required")
+        // }
         else if (validator.isEmpty(startdate)) {
             return showError("Start date is required")
         }
@@ -109,6 +109,12 @@ const UnavailForm = ({ navigation }) => {
         }
         else if (validator.isEmpty(note)) {
             return showError("Note is required")
+        } if(!validator.isAlphanumeric(note,'en-US',{ignore:' ~!@#$%^&*()-_+={}[]|/\:;"<>,.?'}))
+        {
+            return showError("Note should be in alpha numeric form")
+        }if(!validator.isLength(note,3,1000))
+        {
+            return showError("Note should be between 3 to 1000 alpha-numeric characters")
         }
         else {
             console.log('*****************')
@@ -118,7 +124,7 @@ const UnavailForm = ({ navigation }) => {
                 title: title,
                 note: note,
                 type: type,
-                status: status,
+                status: "pending",
                 startDate: startdate,
                 endDate: enddate
             })
@@ -167,13 +173,13 @@ const UnavailForm = ({ navigation }) => {
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Type</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} ph={'Select Type'} data={types} onchange={value => {
+                    <Dropdowns width={"200%"} ph={type?type:'Select Type'} data={types} onchange={value => {
                         settype(value)
                     }} />
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Status</Text>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns width={"200%"} ph={'Select Status'} data={data} onchange={value => {
+                    <Dropdowns width={"200%"} ph={status?status:'Select Status'} disable={true} data={data} onchange={value => {
                         onChangestatus(value)
                     }} />
                 </View>
@@ -182,10 +188,10 @@ const UnavailForm = ({ navigation }) => {
                     <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginLeft: '35%' }}>End Date</Text>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                    <DatePick open={true} width={"90%"} fontsize={12} onChange={date => {
+                    <DatePick width={"90%"} open={true} calendarbgcolor={"#FFFFFF"} fontsize={12} onChange={date => {
                         onChangestartdate(date)
                     }} />
-                    <DatePick open={true} width={"90%"} fontsize={12} onChange={date => {
+                    <DatePick open={true} width={"90%"} calendarbgcolor={"#FFFFFF"} fontsize={12} onChange={date => {
                         onChangeenddate(date)
                     }} />
 

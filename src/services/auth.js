@@ -1,14 +1,16 @@
+import useUser from 'hooks/useUser';
 import _ from 'lodash';
-import {showMessage} from 'react-native-flash-message';
-import {updateUser} from 'redux/reducer/auth-reducer';
-import {client} from 'services';
+import { showMessage } from 'react-native-flash-message';
+import { updateUser,getEmployeeid } from 'redux/reducer/auth-reducer';
+import { client } from 'services';
 import store from 'store';
-import {showError} from 'utils/toast';
+import { showError } from 'utils/toast';
 
-export const login = payload =>{
-  console.log("!!!!!!!!!!!!!!!!!!!!!!",payload);
+
+export const login = payload => {
+  console.log("!!!!!!!!!!!!!!!!!!!!!!", payload);
   return new Promise((resolve, reject) => {
-    client.post('/api/v1/auth/login', payload).then(res => resolve(res)).catch((err)=> reject(err))
+    client.post('/api/v1/auth/login', payload).then(res => resolve(res)).catch((err) => reject(err))
   })
 }
 
@@ -24,14 +26,14 @@ export const resetPassword = payload =>
 export const updateUserRole = (userRoleId, header = {}) => {
   return new Promise((resolve, reject) => {
     client
-      .post('/api/v1/user/updateUserRole', {userRoleId}, {headers: header})
-      .then(res => resolve(res.data)).catch((err)=>reject(err));
+      .post('/api/v1/user/updateUserRole', { userRoleId }, { headers: header })
+      .then(res => resolve(res.data)).catch((err) => reject(err));
   })
 };
 
 export const updateEmployeeProfile = (payload, header = {}) => {
   return client
-    .post('/api/v1/userProfiles/createOrUpdate', payload, {headers: header})
+    .post('/api/v1/userProfiles/createOrUpdate', payload, { headers: header })
     .then(res => res.data);
 };
 
@@ -42,12 +44,23 @@ export const updateProfile = payload => {
 };
 
 export const getUserDetail = async () => {
-  const {dispatch} = store;
+  const { dispatch } = store;
   try {
-    const {data} = await client.get('/api/v1/user/details');
-    console.log('getUserDetail auth 40', {data});
+    const { data } = await client.get('/api/v1/user/details');
+    console.log('getUserDetail auth 40', { data });
     dispatch(updateUser(data?.user));
-  } catch (error) {}
+  } catch (error) { }
+};
+
+export const getEmployeeID = async () => {
+  const { userId } = useUser()
+  const userid = userId
+  const { dispatch } = store;
+  try {
+    const { data } = await client.get(`/api/v1/employee/profile/${userid}`);
+    console.log('getEmployeeid auth 40', { data });
+    dispatch(getEmployeeid(data?.user));
+  } catch (error) { }
 };
 
 export const avatarUpload = async file => {
@@ -73,10 +86,10 @@ export const avatarUpload = async file => {
 export const showErrorMessage = error => {
   try {
     let errorMessage =
-        error?.response?.data?.message ??
-        error?.response?.data?.message?.errors?.[0]?.message ??
-        error?.response?.data?.message?.[0]?.msg ??
-        'Server Error',
+      error?.response?.data?.message ??
+      error?.response?.data?.message?.errors?.[0]?.message ??
+      error?.response?.data?.message?.[0]?.msg ??
+      'Server Error',
       errorMessageText = _.isString(errorMessage)
         ? errorMessage
         : 'Server Error';

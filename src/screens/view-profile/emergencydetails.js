@@ -169,8 +169,8 @@ const EmergencyDetails = ({ navigation }) => {
                 />
 
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={'Country'} disable={true}/>
-                    <Dropdowns ph={'State'} disable={true}/>
+                    <Dropdowns ph={country?country:'Country'} disable={true}/>
+                    <Dropdowns ph={state?state:'State'} disable={true}/>
                 </View>
                 <View style={styles.postalCodeWrapper}>
                 <TextInput

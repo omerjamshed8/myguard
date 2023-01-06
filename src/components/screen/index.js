@@ -1,5 +1,5 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet} from 'react-native';
 import { commonStyle } from 'theme';
 import colors from 'theme/colors';
 
@@ -12,6 +12,8 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: colors.white,
-    ...commonStyle.screenPadding
+    ...commonStyle.screenPadding,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height-20
   },
 });

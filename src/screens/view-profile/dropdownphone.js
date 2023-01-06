@@ -29,8 +29,6 @@ const Countryinput = ({disabled,onchange,value}) => {
   const c_code=countrycode?.callingCode[0]
   let a=`${c_code}${num}`;
   console.log("a=",a)
-  // const number=""+c_code+num;
-  // console.log(""+c_code+num);
   if(typeof onchange === 'function') {
     onchange(a)
   }
@@ -38,6 +36,7 @@ const Countryinput = ({disabled,onchange,value}) => {
     console.log(PhoneInputState, 'STATE');
     phoneInput?.current?.modalVisible === true;
   }
+
   function Render() {
     return (
       <View style={{position: 'absolute', right: -30, zIndex: -1}}>
@@ -75,23 +74,23 @@ const Countryinput = ({disabled,onchange,value}) => {
             borderColor: '#000',
           }}></TouchableOpacity> */}
         <PhoneInput
-          placeholder="Type here....... "
+          placeholder={value}
           disabled={disabled}
           onChangeText={text=>setnum(text)}
-          value={value}
           containerStyle={[
             {
               backgroundColor: '#fff',
               height: 60,
               width: "100%",
               borderRadius: 12,
-              borderColor: '#000',
+              // borderColor: '#000',
               borderWidth: 2,
-              paddingHorizontal: 5,
+              // paddingHorizontal: 5,
               // paddingVertical: 5,
               overflow: 'hidden',
             },
           ]}
+          textInputProps={value={value}}
           disableArrowIcon
           onChangeCountry={setcountrycode}
           textInputStyle={{

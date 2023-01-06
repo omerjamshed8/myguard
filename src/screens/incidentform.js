@@ -24,41 +24,41 @@ import useUser from 'hooks/useUser';
 
 function IncidentForm({ navigation }) {
   const { getUserID, user } = useUser();
-  const userID=getUserID()
+  const userID = getUserID()
   useEffect(() => {
     (async () => {
       let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
       console.log(1)
-      if(employeeResponse.data.employee) {
-          console.log(2)
-          let employee = employeeResponse.data.employee
-          setemployeeid(employee.id)
-          let customerResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/customers`)
-          let customers = customerResponse.data.data
-          setcustomer(customers)
+      if (employeeResponse.data.employee) {
+        console.log(2)
+        let employee = employeeResponse.data.employee
+        console.log("employeeid",employee.id)
+        setemployeeid(employee.id)
+        let customerResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/customers`)
+        let customers = customerResponse.data.data
+        setcustomer(customers)
 
-          let siteResponse=await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/sites`)
-          if(siteResponse.data.data)
-          {
-            let siteid = siteResponse.data.data
-            setSiteId(siteid)
-            console.log("Site ids",siteid)
-          }
+        let siteResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/sites`)
+        if (siteResponse.data.data) {
+          let siteid = siteResponse.data.data
+          setSiteId(siteid)
+          console.log("Site ids", siteid)
+        }
 
-          // setcopy(customers)
+        // setcopy(customers)
       } else {
-          console.log(3)
+        console.log(3)
       }
       console.log(4)
-  })()
+    })()
   }, [])
 
-  
-  const [employeeid,setemployeeid]=useState('')
-  const [cust,setcust]=useState({})
-  const [custId,setcustId]=useState('')
-  const [siteid,setSiteid]=useState('')
-  const [sitename,setsitename]=useState('')
+
+  const [employeeid, setemployeeid] = useState('')
+  const [cust, setcust] = useState('')
+  const [custId, setcustId] = useState('')
+  const [siteid, setSiteid] = useState('')
+  const [sitename, setsitename] = useState('')
   const [fname, onChangefname] = React.useState('');
   const [reqaction, onChangereqaction] = React.useState('');
   const [reqAction, onChangereqAction] = React.useState('');
@@ -68,20 +68,27 @@ function IncidentForm({ navigation }) {
   const [file, onchangeFile] = useState('');
   const [video, onchangeVideo] = useState('')
   const [isPopup, setPopup] = useState(false);
-  const [siteId,setSiteId]=useState('')
-  console.log("Customer=======",cust)
-  console.log("CustomerId is",custId)
-  
-  const site=siteId?siteId.map((item,index)=>(
-      {label:item?.name,value:item?.id}
-  )):null
+  const [siteId, setSiteId] = useState('')
+  // console.log("Customer=======", cust)
+  // console.log("CustomerId is", custId)
+  console.log("customer", customer);
 
-  const customers=customer?customer.map((item,index)=>(
-    {label:item?.name,value:item?.id}
-)):null
+  const converttostring = (id) => {
+    let value = id.toString()
+    return value;
+  }
+  var id;
+  const site = siteId ? siteId.map((item) => (
+    { label: item?.name, value: converttostring(item.id) }
+  )) : null
+  console.log("Site idssss", site)
 
+  const customers = customer ? customer.map((item) => (
+    { label: item?.name, value: converttostring(item.id) }
+  )) : null
+  console.log("Customersss", customers);
   // const data=''
-  console.log("**********************",siteId)
+  console.log("**********************", siteId)
   console.log("video url got in incidentform", video)
   console.log("document url got in incidentform", file)
   console.log("file uri", file)
@@ -89,82 +96,86 @@ function IncidentForm({ navigation }) {
 
   console.log("Customer name", responses[0]?.Customer)
   console.log(customer)
- 
+
 
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
-    if(validator.isEmpty(fname))
-    {
+    if (validator.isEmpty(custId)) {
+      return showError("Please select customer name")
+    }
+    if (validator.isEmpty(siteid)) {
+      return showError("Please select site name")
+    }
+    if (!validator.isNumeric(siteid)) {
+      return showError("Site name is required")
+    }
+    if (validator.isEmpty(fname)) {
       return showError("Form name is required")
     }
-    else if(!validator.isAlpha(fname))
-    {
+    if (!validator.isAlpha(fname, 'en-US', { ignore: ' ' })) {
       return showError("Form name should be in alphabetical form")
     }
-    else if(!validator.isLength(fname,3,50))
-    {
+    if (!validator.isLength(fname, 3, 50)) {
       return showError("Form name should be between 3 to 50 alphabets")
     }
-    else if(validator.isEmpty(reqaction))
-    {
+    if (validator.isEmpty(reqaction)) {
       return showError("Action is required")
     }
-    else if(!validator.isAlpha(reqaction))
-    {
+    if (!validator.isAlpha(reqaction, 'en-US', { ignore: ' ' })) {
       return showError("Required Action should be in alphabetical form")
     }
-    else if(!validator.isLength(reqaction,3,50))
-    {
+    if (!validator.isLength(reqaction, 3, 50)) {
       return showError("Required Action should be between 3 to 50 alphabets")
     }
-    else if(validator.isEmpty(desc))
-    {
+    if (validator.isEmpty(desc)) {
       return showError("Description is required")
     }
-    else if(!validator.isAlphanumeric(desc))
-    {
-      return showError("Description should be in alphabetical form")
+    if (!validator.isAlphanumeric(desc, 'en-US', { ignore: ' ~!@#$%^&*()-_+={}[]|/\:;"<>,.?' })) {
+      return showError("Description should be in alphanumeric form")
     }
-    else if(!validator.isLength(desc,3,1000))
-    {
+    if (!validator.isLength(desc, 3, 1000)) {
       return showError("Description should be between 3 to 1000 characters")
     }
-    // axios.get(
-    //           `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
-    //       ).then(res => {
-    //           console.log('successfully get response')
-    //           console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
-    //           setresponses(res?.data?.data)
-    //           setcopy(res.data.data)
-    //           unavailCtx.setData(res?.data?.data)
-    //       }).catch(e => {
-    //           console.log('error')
-    //           console.log(e.response.data)
-    //       })
+    else {
+      // axios.get(
+      //           `https://securitylinksapi.herokuapp.com/api/v1/employee/2/customers`,
+      //       ).then(res => {
+      //           console.log('successfully get response')
+      //           console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+      //           setresponses(res?.data?.data)
+      //           setcopy(res.data.data)
+      //           unavailCtx.setData(res?.data?.data)
+      //       }).catch(e => {
+      //           console.log('error')
+      //           console.log(e.response.data)
+      //       })
 
-    axios.post(
-      "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
-      {
-        customerId:custId,
-        employeeId:employeeid,
-        siteId:siteid,
-        status:"pending",  
-        formName:fname
-      }
-    ).then(res => {
-      if (res?.status === 200) {
-        setPopup(true)
-      }
-    console.log('updated successfully')
-    console.log(res)
-      console.log('success')
-      console.log(res)
-    }).catch(e => {
-      console.log('error')
-      console.log(e.response.data)
-    })
+      axios.post(
+        "https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/create",
+        {
+          customerId: custId,
+          employeeId: employeeid,
+          siteId: siteid,
+          status: "pending",
+          formName: fname,
+          requiredAction: reqaction,
+          description:desc
+        }
+      ).then(res => {
+        if (res?.status === 200) {
+          setPopup(true)
+        }
+        console.log('updated successfully')
+        console.log(res)
+        console.log('success')
+        console.log(res)
+      }).catch(e => {
+        console.log('error')
+        console.log(e.response.data)
+      })
 
-  };
+    };
+  }
 
   return (
     <SafeAreaView style={styles.splashView}>
@@ -172,7 +183,7 @@ function IncidentForm({ navigation }) {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
-        >
+      >
 
         {/* <View style={{justifyContent:'center',alignItems:'center'}}>
                 <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
@@ -181,10 +192,10 @@ function IncidentForm({ navigation }) {
         <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%', marginTop: "20%" }}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns width={Dimensions.get('window').width - 40} ph={"Name"} data={customers} onchange={(custom,id)=>{
+            <Dropdowns width={Dimensions.get('window').width - 40} ph={cust ? cust : "Name"} data={customers} onchange={(custom, id) => {
               setcust(custom);
               setcustId(id);
-            }}/>
+            }} />
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -194,10 +205,10 @@ function IncidentForm({ navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns width={Dimensions.get('window').width - 40} ph={"Select Site"} data={site} onchange={(custom,id)=>{
-              setsitename(custom);
-              setSiteid(id);
-            }}
+              <Dropdowns width={Dimensions.get('window').width - 40} ph={sitename ? sitename : "Select Site"} data={site} onchange={(custom, id) => {
+                setsitename(custom);
+                setSiteid(id);
+              }}
               />
             </View>
             {/* <CustomInput
@@ -261,31 +272,31 @@ function IncidentForm({ navigation }) {
         </View>
 
         <View>
-          <ImageUploadd 
-            onChangeFile={(files) => { onchangeFile(files) }}  
+          <ImageUploadd
+            onChangeFile={(files) => { onchangeFile(files) }}
             onChangeVideo={
-              (video) => {  
-              console.log('*********************')
-              console.log(video)
-              console.log('hitting api')
-              console.log('*********************') 
-              onchangeVideo(video.uri); 
-              const fd = new FormData()
-              fd.append('video', "Hello")
-              axios({
-                method: "post",
-                url: "https://securitylinksapi.herokuapp.com/api/v1/mp-routes/upload/video",
-                data: fd,
-                headers: { "Content-Type": "multipart/form-data" },
-              }).then(res => { 
-                console.log('&&&&&&&&& success') 
-                console.log(res)
-              }).catch(e => {
-                console.log('^^^^^ error') 
-                console.log(e.response.data)  
-              })
+              (video) => {
+                console.log('*********************')
+                console.log(video)
+                console.log('hitting api')
+                console.log('*********************')
+                onchangeVideo(video.uri);
+                const fd = new FormData()
+                fd.append('video', "Hello")
+                axios({
+                  method: "post",
+                  url: "https://securitylinksapi.herokuapp.com/api/v1/mp-routes/upload/video",
+                  data: fd,
+                  headers: { "Content-Type": "multipart/form-data" },
+                }).then(res => {
+                  console.log('&&&&&&&&& success')
+                  console.log(res)
+                }).catch(e => {
+                  console.log('^^^^^ error')
+                  console.log(e.response.data)
+                })
+              }
             }
-          }  
           />
         </View>
 
@@ -307,17 +318,17 @@ function IncidentForm({ navigation }) {
         </View>
 
         <CommonModal
-                    isVisible={isPopup}
-                    component={
-                        <ResetSuccess
-                            title={'Incident added successfully.'}
-                            onDone={() => {
-                                setPopup(false);
-                                navigation.goBack();
-                            }}
-                        />
-                    }
-                />
+          isVisible={isPopup}
+          component={
+            <ResetSuccess
+              title={'Incident added successfully.'}
+              onDone={() => {
+                setPopup(false);
+                navigation.goBack();
+              }}
+            />
+          }
+        />
         <View>
           <Text>{'\n'}</Text>
         </View>

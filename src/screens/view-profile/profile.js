@@ -28,16 +28,16 @@ import Dropdowns from './dropdownpicker';
 import { TextInput } from 'react-native-gesture-handler';
 import { useEffect } from 'react';
 import axios from 'axios';
+import { useIsFocused } from '@react-navigation/native';
 
-const EditProfile = ({ navigation, edit }) => {
-    console.log(edit);
-    const { getUserFullName,getUserPhone, getUserImage, getUserEmail, user } = useUser();
+const EditProfile = ({ navigation }) => {
+    const { getUserImage, user } = useUser();
 
-    const [responses,setresponses]=useState()
-    const [data,setdata]=useState()
+    const [responses,setresponses]=useState('')
+    const [data,setdata]=useState('')
 
-    const [Fullname, onChangeName] = React.useState(responses?.name);      //getUserFullName()
-    const [phone, onChangePhone] = React.useState(responses?.phone);            //getUserPhone()
+    const [Fullname, onChangeName] = React.useState(responses?.name||'');      //getUserFullName()
+    const [phone, onChangePhone] = React.useState(responses?.phone||'');            //getUserPhone()
     console.log("Phone",phone);
     const [address, onChangeAddress] = React.useState(
         responses?.address || '',
@@ -50,41 +50,52 @@ const EditProfile = ({ navigation, edit }) => {
         user?.UserProfile?.dateOfBirth || '',
     );
 
-    const [gender, onChangegender] = useState(user?.UserProfile?.gender)
-    const [status, onChangestatus] = useState(user?.UserProfile?.status)
-    const [startdate, onChangestartdate] = useState(user?.UserProfile?.startdate)
-    const [enddate, onChangeenddate] = useState(user?.UserProfile?.enddate)
-    const [taxfilenumber, onChangetaxfilenumber] = useState(user?.UserProfile?.taxfilenumber)
-    const [taxfiledeclaration, onChangetaxfiledeclaration] = useState(user?.UserProfile?.taxfiledeclaration)
-    const [taxscale, onChangetaxscale] = useState(user?.UserProfile?.taxscale)
-    const [additionaltax, onChangeadditionaltax] = useState(user?.UserProfile?.additionaltax);
-    const [country, onChangecountry] = useState(user?.UserProfile?.country);
+    const [gender, onChangegender] = useState(user?.UserProfile?.gender||'')
+    const [status, onChangestatus] = useState("State"||'')
+    const [startdate, onChangestartdate] = useState(user?.UserProfile?.startdate||'')
+    const [enddate, onChangeenddate] = useState(user?.UserProfile?.enddate||'')
+    const [taxfilenumber, onChangetaxfilenumber] = useState(user?.UserProfile?.taxfilenumber||'')
+    const [taxfiledeclaration, onChangetaxfiledeclaration] = useState(user?.UserProfile?.taxfiledeclaration||'')
+    const [taxscale, onChangetaxscale] = useState(user?.UserProfile?.taxscale||'')
+    const [additionaltax, onChangeadditionaltax] = useState(user?.UserProfile?.additionaltax||'');
+    const [country, onChangecountry] = useState(user?.UserProfile?.country||'');
 
     const [isPicker, setPicker] = useState(false);
     const [image, setImage] = useState(null);
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
+    const isFocused=useIsFocused()
+
     useEffect(() => {
-        axios.get(
-            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
-        ).then(res => {
-            setresponses(res?.data?.employee)
-            setdata(res?.data?.employee)
-            onChangeName(res?.data?.employee?.name)
-            onChangePhone(res?.data?.employee?.phone)
-            // console.log("Location*******",res?.data?.employee?.Location);
-            onChangeAddress(res?.data?.employee?.Location?.address)
-            onChangeCity(res?.data?.employee?.Location?.city)
-            onChangeadditionaltax((res?.data?.employee?.EmployeeHrDetail?.additionalTax))
-            onChangetaxfiledeclaration((res?.data?.employee?.EmployeeHrDetail?.taxDecFileUrl))
-            onChangetaxfilenumber((res?.data?.employee?.EmployeeHrDetail?.taxFileNumber))
-            onChangetaxscale((res?.data?.employee?.EmployeeHrDetail?.taxScale))
-        }).catch(e => {
-            console.log('error fetching data from profile api')
-            console.log(e.response.data)
-        })
-    }, [])
+        if(isFocused)
+        {
+            axios.get(
+                "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
+            ).then(res => {
+                setresponses(res?.data?.employee)
+                setdata(res?.data?.employee)
+                onChangeName(res?.data?.employee?.name)
+                onChangePhone(res?.data?.employee?.phone)
+                // console.log("Location*******",res?.data?.employee?.Location);
+                onChangeAddress(res?.data?.employee?.Location?.address)
+                onChangeCity(res?.data?.employee?.Location?.city)
+                onChangeadditionaltax((res?.data?.employee?.EmployeeHrDetail?.additionalTax))
+                onChangetaxfiledeclaration((res?.data?.employee?.EmployeeHrDetail?.taxDecFileUrl))
+                onChangetaxfilenumber((res?.data?.employee?.EmployeeHrDetail?.taxFileNumber))
+                onChangetaxscale((res?.data?.employee?.EmployeeHrDetail?.taxScale))
+                onChangestate(res?.data?.employee?.Location?.state)
+                onChangecountry(res?.data?.employee?.Location?.country)
+                onChangegender(res?.data?.employee?.gender)
+                onChangestatus(res?.data?.employee?.status)
+                onChangestartdate(res?.data?.employee?.EmployeeHrDetail?.startDate)
+                onChangeenddate(res?.data?.employee?.EmployeeHrDetail?.endDate)
+            }).catch(e => {
+                console.log('error fetching data from profile api')
+                console.log(e.response.data)
+            })
+        }
+    }, [isFocused])
 
 
     const onClosePicker = () => setPicker(false);
@@ -139,18 +150,18 @@ const EditProfile = ({ navigation, edit }) => {
                 />
                 <View style={styles.postalCodeWrapper}>
 
-                    <Dropdowns ph={'State'} disable={true} />
-                    <Dropdowns ph={'Country'} disable={true}/>
+                    <Dropdowns ph={state?state:"State"} disable={true} />
+                    <Dropdowns ph={country?country:'Country'} disable={true}/>
 
                 </View>
 
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={'Gender'} disable={true}/>
-                    <Dropdowns ph={'Status'} disable={true}/>
+                    <Dropdowns ph={gender?gender:'Gender'} disable={true}/>
+                    <Dropdowns ph={status?status:'Status'} disable={true}/>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={'Start Date'} disable={true}/>
-                    <Dropdowns ph={'End Date'} disable={true}/>
+                    <Dropdowns ph={startdate?startdate:'Start Date'} disable={true}/>
+                    <Dropdowns ph={enddate?enddate:'End Date'} disable={true}/>
                 </View>
                 <TextInput
                     value={taxfilenumber}

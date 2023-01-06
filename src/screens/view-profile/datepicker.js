@@ -11,7 +11,7 @@ import {
   import {DATE_PICK} from '../../assets1/images';
   import {FONTS} from '../../assets1/Style/font';
   
-  const DatePick = ({width,open, onChange,fontsize,calendarbgcolor}) => {
+  const DatePick = ({width,open, onChange,fontsize,calendarbgcolor,date}) => {
     console.log("open",open)
     const [cal, setCal] = useState(false);
     const [selectedDATE, setDATE] = useState('');
@@ -43,7 +43,7 @@ import {
             paddingHorizontal: 10,
           }}>
           <Text style={{fontFamily: FONTS.MEDIUM,color:'black',fontSize:fontsize}}>
-            {selectedDATE.dateString || Today}
+            {date?date:selectedDATE.dateString || Today}
           </Text>
           <TouchableOpacity
             style={{height: 30, width: 30}}

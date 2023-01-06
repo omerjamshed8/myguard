@@ -22,10 +22,29 @@ import validator from 'validator';
 import ResetSuccess from 'components/reset-success';
 import _ from 'lodash';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const ViewBankingDetails = ({ navigation }) => {
+
+    const {getUserID}=useUser()
+    const userID=getUserID()
+    useEffect(() => {
+        (async () => {
+            let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+            console.log(1)
+            if (employeeResponse.data.employee) {
+                console.log(2)
+                let employee = employeeResponse.data.employee
+                setemployeeid(employee.id)
+            } else {
+                console.log(3)
+            }
+            console.log(4)
+        })()
+    }, [])
+    const [employeeId,setemployeeid]=useState('')
     const {  user } = useUser();
-    const [bankname,setbankname]=useState(user?.UserProfile?.bankname);
+    const [bankname,setbankname]=useState(user?.UserProfile?.bankname||'');
     const [accountname, onChangeaccountname] = React.useState(user?.UserProfile?.accountname || '');
     const [BSB, onChangeBSB] = React.useState(
         user?.UserProfile?.BSB || '',
@@ -56,12 +75,11 @@ const ViewBankingDetails = ({ navigation }) => {
         }
         else if (!validator.isLength(bankname, 3, 50)) {
             return showError('Bank name should be between 3 to 50 alphabets');
-        } else if (!validator.isAlpha(bankname)) {
+        } else if (!validator.isAlpha(bankname,'en-US',{ignore:' '})) {
             return showError('Bank name should be in alphabetical format');
-        }
-        else if (!validator.isLength(accountname, 3, 50)) {
+        }else if (!validator.isLength(accountname, 3, 50)) {
             return showError('Account name should be between 3 to 50 alphabets');
-        } else if (!validator.isAlpha(accountname)) {
+        }else if (!validator.isAlpha(accountname,'en-US',{ignore:' '})) {
             return showError('The account name should be in alphabetical format');
         } else if (validator.isEmpty(BSB)) {
             return showError('BSB is required');
@@ -107,7 +125,7 @@ const ViewBankingDetails = ({ navigation }) => {
             //     setLoading(false);
             // }
             axios.put(
-                "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/13",
+                `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${employeeId}`,
                 {
                     bankName:bankname,
                     accountName:accountname,
@@ -148,7 +166,7 @@ const ViewBankingDetails = ({ navigation }) => {
 
     return (
         <Screen>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ marginTop: "30%" }} />
                 <CustomInput
                     value={bankname}
@@ -161,18 +179,20 @@ const ViewBankingDetails = ({ navigation }) => {
                     placeholder="Account Name"
                     onChangeText={onChangeaccountname}
                     // inputType={'phone'}
-                    keyboardType="number-pad"
+                    keyboardType="default"
                 />
 
                 <CustomInput
                     value={BSB}
                     placeholder="BSB"
                     onChangeText={onChangeBSB}
+                    keyboardType={"numeric"}
                 />
                 <CustomInput
                     value={accountnumber}
                     placeholder="Account Number"
                     onChangeText={onChangeaccountnumber}
+                    keyboardType={"numeric"}
                 />
 
                 <View>

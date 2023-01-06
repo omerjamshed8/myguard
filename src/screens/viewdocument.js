@@ -49,12 +49,23 @@ function ViewDocument({ route, navigation }) {
     console.log("response file", file[0]?.uri)
     console.log(props.id)
 
+    let createdat;
+
+    const dateconverter = (date) => {
+        createdat = new Date(date)
+        newdate = createdat.getFullYear() + '/' + (createdat.getMonth() + 1) + '/' + createdat.getDate()
+        return newdate
+    }
+
     return (
         <SafeAreaView style={styles.splashView}>
             <ScrollView
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}>
-                <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "20%" }}>
+                <View style={{ alignItems: 'center' }}>
+                    <Text style={{ color: '#2A2D43', marginTop: 20, fontSize: 15, fontWeight: '600' }}>New Incident</Text>
+                </View>
+                <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "15%" }}>
                     <View>
                         <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Name</Text>
                         <CustomInput
@@ -76,7 +87,7 @@ function ViewDocument({ route, navigation }) {
                         />
 
                         <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Expiry Date</Text>
-                        <DatePick width={"100%"} onChange={(date) => {
+                        <DatePick width={"100%"} date={dateconverter(props?.Document?.expiryDate)} onChange={(date) => {
                             setdate(date)
                         }} />
 

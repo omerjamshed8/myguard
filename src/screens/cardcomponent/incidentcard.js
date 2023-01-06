@@ -74,19 +74,19 @@ export default function UnavailabilityCard({ navigation }) {
 
     return (
         <SafeAreaView style={[styles.container,{justifyContent:'center',alignItems:'center'}]}>
+            <View style={{flex:1,justifyContent:"center",alignItems:"center"}}>
             {
                 responses===''?
-                        <Text style={{fontFamily: fonts.Poppins.Medium,color: '#2A2D43',textAlign:'center',fontSize:16}}>No Available Report</Text>
-                    :null
-            }
-
+                <Text style={{fontFamily: fonts.Poppins.Medium,color: '#2A2D43',textAlign:'center',fontSize:16,fontWeight:"600"}}>No Available Report...</Text>
+                :
+                <>
             <View style={{justifyContent:'center',marginTop:-24}}>
             <Dropdowns width={Dimensions.get('window').width} bgcolor="#F2385F" ph={"All"} phcolor={"white"} borderradius={-1} data={datas}
                 onchange={(label)=>{
                     // setLabel(label)
                     filterstatus(label)
                 }}
-            />
+                />
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 {
@@ -152,6 +152,9 @@ export default function UnavailabilityCard({ navigation }) {
                     )) : null
                 }
             </ScrollView>
+                </>
+             }
+             </View> 
         </SafeAreaView>
     )
 }

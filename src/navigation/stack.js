@@ -7,7 +7,7 @@ import Splash from 'screens/splash';
 import { useSelector } from 'react-redux';
 import TabNav from './tabs';
 import EditProfile from 'screens/profile/edit-profile';
-import { Image, TouchableOpacity, StyleSheet, Text,Animated,Dimensions, View } from 'react-native';
+import { Image, TouchableOpacity, StyleSheet, Text, Animated, Dimensions, View } from 'react-native';
 import { commonStyle } from 'theme';
 import { Images } from 'theme';
 import SplashScreen from 'react-native-splash-screen';
@@ -38,6 +38,7 @@ import ViewIncident from 'screens/viewincident';
 import EditIncident from 'screens/editincident';
 import { delay } from 'lodash';
 import AnimatedSplash from 'screens/animatedsplash';
+import GuardHome from 'screens/guardhome';
 
 const Stack = createStackNavigator();
 
@@ -53,8 +54,9 @@ export default function MyStack() {
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
+      // <AnimatedSplash/>
     }, 2000);
-  },[])
+  }, [])
 
   //   Animated.sequence([
   //     Animated.timing(moveAnim,{
@@ -174,20 +176,34 @@ export default function MyStack() {
             <Stack.Screen
               name="addDocument"
               component={AddDocument}
-              options={{
+              options={({ route, navigation }) => ({
                 headerShown: true,
                 headerStyle: routeStyles.headerStyle,
                 headerTitle: 'Add Document',
                 headerTitleStyle: routeStyles.headerTitleStyle,
                 headerTitleAlign: 'center',
-                headerBackImage: () => (
-                  <Image
-                    source={Images.headerBack}
-                    resizeMode={'contain'}
-                    style={routeStyles.headerBackIconStyle}
-                  />
-                ),
-              }}
+                headerLeft: () => (
+                  <TouchableOpacity
+                    style={[commonStyle.screenPadding]}
+                    onPress={() => {
+                      navigation.navigate('Home')
+                    }}>
+                    <Image
+                      source={require('../assets/images/headerBack.png')}
+                      resizeMode={'contain'}
+                      style={styles.profileEditIcon}
+                    />
+                  </TouchableOpacity>
+                )
+              })}
+                // headerBackImage: () => (
+                //   <Image
+                //     source={Images.headerBack}
+                //     resizeMode={'contain'}
+                //     style={routeStyles.headerBackIconStyle}
+                //   />
+                // ),
+              // }}
             />
             <Stack.Screen name='TrainingModule' component={TrainingModule}
               options={{
@@ -352,6 +368,7 @@ export default function MyStack() {
               })}
             />
             <Stack.Screen name='Playerss' component={Playerss} options={{ headerShown: false }} />
+            {/* <Stack.Screen name='Home' component={GuardHome} options={{ headerShown: false }} /> */}
             <Stack.Screen name='ViewProfileTabNav' component={ViewProfileTabNav}
               options={{
                 headerShown: true, headerStyle: routeStyles.headerStyle,
@@ -395,23 +412,37 @@ export default function MyStack() {
                   />
                 ),
               }}
-              ViewUnavail
 
             />
             <Stack.Screen name='EditDocument' component={EditDocument}
-              options={{
+              options={({ route, navigation }) => ({
                 headerShown: true, headerStyle: routeStyles.headerStyle,
                 headerTitle: 'Add Document',
                 headerTitleStyle: routeStyles.headerTitleStyle,
                 headerTitleAlign: 'center',
-                headerBackImage: () => (
-                  <Image
-                    source={Images.headerBack}
-                    resizeMode={'contain'}
-                    style={routeStyles.headerBackIconStyle}
-                  />
-                ),
-              }} />
+                headerLeft: () => (
+                  <TouchableOpacity
+                    style={[commonStyle.screenPadding]}
+                    onPress={() => {
+                      navigation.navigate('Home')
+                    }}>
+                    <Image
+                      source={require('../assets/images/headerBack.png')}
+                      resizeMode={'contain'}
+                      style={styles.profileEditIcon}
+                    />
+                  </TouchableOpacity>
+                )
+              })}
+                // headerBackImage: () => (
+                //   <Image
+                //     source={Images.headerBack}
+                //     resizeMode={'contain'}
+                //     style={routeStyles.headerBackIconStyle}
+                //   />
+                // ),
+              // }} 
+              />
 
             <Stack.Screen name='ViewDocument' component={ViewDocument}
               options={{
@@ -460,14 +491,14 @@ export default function MyStack() {
           </>
         ) : (
           <>
-          {/* <Stack.Screen name="AnimatedSplash" component={AnimatedSplash} options={{headerShown:false}}/> */}
+            {/* <Stack.Screen name="AnimatedSplash" component={AnimatedSplash} options={{headerShown:false}}/> */}
 
-          <Stack.Screen
-            name="AuthNav"
-            component={AuthNav}
-            options={{ headerShown: false }}
+            <Stack.Screen
+              name="AuthNav"
+              component={AuthNav}
+              options={{ headerShown: false }}
             />
-            </>
+          </>
         )}
       </Stack.Navigator>
     </NavigationContainer>

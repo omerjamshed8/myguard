@@ -13,13 +13,32 @@ import { compose } from 'redux';
 import { result } from 'lodash';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import QRScanner from './QRcodeScanner/qrscanner';
+import useUser from 'hooks/useUser';
 // import QRCodeScanner from 'react-native-qrcode-scanner';
 
 function GuardHome({ navigation }) {
   const [clockin, setclockin] = useState('Clock in')
   const [scan, setscan] = useState(false);
-  const [result, setresult] = useState()
+  const [result, setresult] = useState('')
   const [modalVisible, setModalVisible] = useState(true);
+  const {getUserID}=useUser();
+  const [employeeId,setemployeeid]=useState('')
+  let userID=getUserID();
+
+  useEffect(() => {
+    (async () => {
+        let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+        console.log(1)
+        if (employeeResponse.data.employee) {
+            console.log(2)
+            let employee = employeeResponse.data.employee
+            setemployeeid(employee.id)
+        } else {
+            console.log(3)
+        }
+        console.log(4)
+    })()
+}, [])
 
   var hours = new Date().getHours(); //To get the Current Hours
   var min = new Date().getMinutes(); //To get the Current Minutes
@@ -162,7 +181,7 @@ function GuardHome({ navigation }) {
                 console.log("settime",time)
                 console.log(hours + ":" + min + ":" + sec)
                 axios.post(
-                  "https://securitylinksapi.herokuapp.com/api/v1/employee/13/checkin",
+                  `https://securitylinksapi.herokuapp.com/api/v1/employee/${employeeId}/checkin`,
                   {
                     checkinTime:time,    
                   }
@@ -177,7 +196,7 @@ function GuardHome({ navigation }) {
                 setclockin('Clock in')
                 setTime(hours + ":" + min + ":" + sec)
                 axios.post(
-                  "https://securitylinksapi.herokuapp.com/api/v1/employee/13/checkin",
+                  `https://securitylinksapi.herokuapp.com/api/v1/employee/${employeeId}/checkin`,
                   {
                     checkinTime:time,    
                   }
@@ -196,8 +215,8 @@ function GuardHome({ navigation }) {
             titleStyle={styles.clockInText}
             title={'Scan QR'}
             onButtonPress={() => {
-              const hamza = axios.get('http://54.171.172.119:3001/api/v1/employee/profile/135').then((res) => setState(res))
-              console.log(state)
+              // const hamza = axios.get('http://54.171.172.119:3001/api/v1/employee/profile/135').then((res) => setState(res))
+              // console.log(state)
              setQrVisible(true)
             }}
             />
@@ -208,7 +227,7 @@ function GuardHome({ navigation }) {
         qrVisible
         ?
         <Modal visible={true} onRequestClose={()=>{setModalVisible(false);setQrVisible(false)}}>
-          <QRScanner/>
+          <QRScanner empid={employeeId}/>
         </Modal>
         :
         null

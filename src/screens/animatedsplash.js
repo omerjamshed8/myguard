@@ -43,14 +43,16 @@ const styles=StyleSheet.create({
   logoText: {
     fontSize: 35,
     marginTop: 20,
-    color: 'white',
+    color: '#2A2D43',
     fontWeight: '700',
   },
   logoContainer: {
     flexDirection: 'row',
   },
   contentContainer: {
-    top: '0%',
+    flex:1,
+    justifyContent:"center",
     alignItems: 'center',
+    backgroundColor:"white"
   },
 })

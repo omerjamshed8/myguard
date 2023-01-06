@@ -96,29 +96,36 @@ const EditUnavail = ({ route,navigation }) => {
         {
             return showError("Title field is required")
         }
-        else if(!validator.isAlpha(title))
+        if(!validator.isAlpha(title,'en-US',{ignore:' '}))
         {
             return showError("Title should be in alphabets")
         }
-        else if(!validator.isLength(title,3,20))
+        if(!validator.isLength(title,3,20))
         {
             return showError("Title should be between 3 to 20 characters")
         }
-        else if(validator.isEmpty(type))
+        if(validator.isEmpty(type))
         {
             return showError("Type field is required")
         }
-        else if(validator.isEmail(startdate))
+        if(validator.isEmpty(startdate))
         {
             return showError("Start date is required")
         }
-        else if(validator.isEmail(enddate))
+        if(validator.isEmpty(enddate))
         {
             return showError("End date is required")
         }
-        else if(validator.isEmail(note))
+        if(validator.isEmpty(note))
         {
             return showError("Note is required")
+        }
+        if(!validator.isAlphanumeric(note,'en-US',{ignore:' ~!@#$%^&*()-_+={}[]|/\:;"<>,.?'}))
+        {
+            return showError("Note should be in alpha numeric form")
+        }if(!validator.isLength(note,3,1000))
+        {
+            return showError("Note should be between 3 to 1000 alpha-numeric characters")
         }
 
         console.log('clicked')
@@ -172,13 +179,13 @@ const EditUnavail = ({ route,navigation }) => {
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Type</Text>
                 <View style={styles.postalCodeWrapper}>
-                <Dropdowns width={"200%"} ph={props?.type} data={types} initialtype={type} onchange={valuee => {
+                <Dropdowns width={"200%"} ph={type?type:"Select Type"} data={types} initialtype={type} onchange={valuee => {
                         settype(valuee)
                 }}/>
                 </View>
                 <Text style={{ color: 'black', fontWeight: '500' }}>Status</Text>
                 <View style={styles.postalCodeWrapper}>
-                   <Dropdowns width={"200%"} ph={props?.status} disable={true} initialtype={status} data={data} onchange={valueee => {
+                   <Dropdowns width={"200%"} ph={status?status:"Status"} disable={true} initialtype={status} data={data} onchange={valueee => {
                         onChangestatus(valueee)
                    }}/>
                 </View>
@@ -187,10 +194,10 @@ const EditUnavail = ({ route,navigation }) => {
                     <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginLeft: '35%' }}>End Date</Text>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                    <DatePick width={"90%"} fontsize={12} open={true} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12} open={true} date={startdate?startdate:props?.startDate} onChange={date => {
                         onChangestartdate(date)
                     }} />
-                    <DatePick width={"90%"} fontsize={12} open={true} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12} date={enddate?enddate:props?.endDate} open={true} onChange={date => {
                         onChangeenddate(date)
                     }} />
                 </View>

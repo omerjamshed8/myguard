@@ -28,10 +28,11 @@ import Dropdowns from '../view-profile/dropdownpicker';
 import Countries from '../../assets1/countries'
 import { value } from 'deprecated-react-native-prop-types/DeprecatedTextInputPropTypes';
 import axios from 'axios';
+import { useEffect } from 'react';
 
 const ViewEditProfile = ({ navigation, edit }) => {
     console.log(edit);
-    const { getUserFullName, getUserImage, getUserEmail, user } = useUser();
+    const { getUserImage, user } = useUser();
 
     const [Fullname, onChangeName] = React.useState('');      ///getUserFullName()
     const [phone, onChangePhone] = React.useState(user?.UserProfile?.phone || '');
@@ -46,15 +47,30 @@ const ViewEditProfile = ({ navigation, edit }) => {
         user?.UserProfile?.dateOfBirth || '',
     );
 
-    const [gender, onChangegender] = useState(user?.UserProfile?.gender)
-    const [status, onChangestatus] = useState(user?.UserProfile?.status)
-    const [startdate, onChangestartdate] = useState(user?.UserProfile?.startdate)
-    const [enddate, onChangeenddate] = useState(user?.UserProfile?.enddate)
-    const [taxfilenumber, onChangetaxfilenumber] = useState(user?.UserProfile?.taxfilenumber)
-    const [taxfiledeclaration, onChangetaxfiledeclaration] = useState(user?.UserProfile?.taxfiledeclaration)
-    const [taxscale, onChangetaxscale] = useState(user?.UserProfile?.taxscale)
-    const [additionaltax, onChangeadditionaltax] = useState(user?.UserProfile?.additionaltax);
-    const [country, onChangecountry] = useState(user?.UserProfile?.country);
+    const {getUserID}=useUser()
+    const userID=getUserID()
+    useEffect(() => {
+        (async () => {
+            let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+            console.log(1)
+            if (employeeResponse.data.employee) {
+                console.log(2)
+                let employee = employeeResponse.data.employee
+                setemployeeid(employee.id)
+            } else {
+                console.log(3)
+            }
+            console.log(4)
+        })()
+    }, [])
+    const [employeeId,setemployeeid]=useState('')
+
+    const [gender, onChangegender] = useState(user?.UserProfile?.gender || '')
+    const [taxfilenumber, onChangetaxfilenumber] = useState(user?.UserProfile?.taxfilenumber || '')
+    const [taxfiledeclaration, onChangetaxfiledeclaration] = useState(user?.UserProfile?.taxfiledeclaration || '')
+    const [taxscale, onChangetaxscale] = useState(user?.UserProfile?.taxscale || '')
+    const [additionaltax, onChangeadditionaltax] = useState(user?.UserProfile?.additionaltax || '');
+    const [country, onChangecountry] = useState(user?.UserProfile?.country || '');
     // const [countryval,setCountryval]=useState()
     // console.log("selectedcountry", country)
 
@@ -120,7 +136,7 @@ const ViewEditProfile = ({ navigation, edit }) => {
         if (validator.isEmpty(Fullname)) {
             return showError('The full name is required');
         }
-        else if (!validator.isAlpha(Fullname)) {
+        else if (!validator.isAlpha(Fullname,'en-US',{ignore:" "})) {
             return showError("Name should be in alphabetical form")
         }
         else if (!validator.isLength(Fullname, 3, 50)) {
@@ -129,13 +145,13 @@ const ViewEditProfile = ({ navigation, edit }) => {
         else if (validator.isEmpty(phone)) {
             return showError('The phone number is required');
         }
-        else if (validator.isMobilePhone(phone)) {
-            return showError('The phone number is should be in correct format');
-        } else if (!validator.isLength(phone, 7, 15)) {
+        else if (!validator.isMobilePhone(number)) {
+            return showError('The phone number should be in correct format');
+        } else if (!validator.isLength(number, 7, 15)) {
             return showError("Phone number should be between 7 to 15 digits")
         } else if (validator.isEmpty(address)) {
             return showError('The address is required');
-        } else if (!validator.isAlphanumeric(address)) {
+        } else if (!validator.isAlphanumeric(address,'en-US',{ignore:' '})) {
             return showError("Address should be in alpha numeric form")
         }
         else if (!validator.isLength(address, 1, 100)) {
@@ -147,19 +163,30 @@ const ViewEditProfile = ({ navigation, edit }) => {
         }
         else if (!validator.isLength(city, 3, 20)) {
             return showError("City should be between 3 to 20 alphabets")
-        } else if (validator.isNumeric(taxfilenumber)) {
+        } else if (!validator.isNumeric(taxfilenumber)) {
             return showError('Tax file number should be numeric');
         } else if (!validator.isLength(taxfilenumber, 4, 30)) {
             return showError("Tax file number should be between 4 to 30 digits")
-        } else if (validator.isNumeric(additionaltax)) {
-            return showError('Additional tax field should be numeric');
-        } else if (!validator.isLength(taxfilenumber, 4, 30)) {
+        }else if(!validator.isNumeric(taxfiledeclaration))
+        {
+            return showError("Tax file declaration should be numeric")
+        }else if(!validator.isLength(taxfiledeclaration,3,20))
+        {
+            return showError("Tax file declaration should be between 3 to 20")
+        } else if (!validator.isNumeric(taxscale)) {
+            return showError('Tax scale field should be numeric');
+        } else if (!validator.isLength(taxscale, 4, 30)) {
             return showError("Additional tax should be between 4 to 30 digits")
-        } else if (validator.isEmpty(postalcode)) {
-            return showError('The postalcode is required');
-        } else if (validator.isEmpty(dob)) {
-            return showError('The date of birth is required');
+        }else if (!validator.isNumeric(additionaltax)) {
+            return showError('Additional tax field should be numeric');
+        } else if (!validator.isLength(additionaltax, 4, 30)) {
+            return showError("Additional tax should be between 4 to 30 digits")
         }
+        //  else if (validator.isEmpty(postalcode)) {
+        //     return showError('The postalcode is required');
+        // } else if (validator.isEmpty(dob)) {
+        //     return showError('The date of birth is required');
+        // }
 
         // let payload = {
         //     address:address,
@@ -209,19 +236,21 @@ const ViewEditProfile = ({ navigation, edit }) => {
         else {
 
             axios.put(
-                "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/13",
+                `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${employeeId}`,
                 {
                     address: address,
                     city: city,
-                    state: state,
+                    state: state?state:'',
                     dateOfBirth: dob ? new Date(dob).toISOString() : '',
                     name: Fullname,
-                    phone: phone,
-                    taxFileNumber: taxfilenumber,
-                    avatar: image,
-                    taxDecFileUrl: taxfiledeclaration,
-                    taxScale: taxscale,
-                    additionalTax: additionaltax
+                    phone: number,
+                    taxFileNumber: taxfilenumber?taxfilenumber:'',
+                    // avatar: image,
+                    taxDecFileUrl: taxfiledeclaration?taxfiledeclaration:'',
+                    taxScale: taxscale?taxscale:'',
+                    additionalTax: additionaltax?additionaltax:'',
+                    country:country?country:'',
+                    gender:gender?gender:''
                 }
             ).then(res => {
                 if (res?.status === 200) {
@@ -234,6 +263,8 @@ const ViewEditProfile = ({ navigation, edit }) => {
                 console.log('error')
                 console.log(e.response.data)
             })
+
+            navigation.navigate('ViewProfile')
         };
     }
 
@@ -256,7 +287,7 @@ const ViewEditProfile = ({ navigation, edit }) => {
 
     return (
         <Screen>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ alignItems: 'center', paddingTop: 20 }}>
                     <Image
                         style={styles.userImage}
@@ -301,15 +332,17 @@ const ViewEditProfile = ({ navigation, edit }) => {
                 <View style={styles.postalCodeWrapper}>
                     {/* for state */}
 
-                    <Dropdowns ph={'State'} data={states} onchange={(statee) => {
+                    <Dropdowns ph={state?state:'State'} data={states} onchange={(statee) => {
                         onChangestate(statee)
                     }} />
-                    <Dropdowns ph={'Country'} data={countries} onchange={(countryy) => {
+                    <Dropdowns ph={selectedCountry?selectedCountry.country:'Country'} data={countries} onchange={(countryy) => {
                         onChangecountry(countryy)
                     }} />
                 </View>
                 <View>
-                    <Dropdowns ph={'Gender'} width={"200%"} data={data} />
+                    <Dropdowns ph={gender?gender:'Gender'} width={"200%"} data={data} onchange={(gender) => {
+                        onChangegender(gender)
+                    }}/>
                 </View>
                 <View>
                     <CustomInput
@@ -347,7 +380,7 @@ const ViewEditProfile = ({ navigation, edit }) => {
                     title={'Save Changes'}
                     buttonWrapper={{ marginTop: 30 }}
                 />
-                <Text style={styles.cancelText} onPress={() => navigation.goBack()}>
+                <Text style={styles.cancelText} onPress={() => navigation.navigate('ViewProfile')}>
                     Cancel
                 </Text>
             </ScrollView>
@@ -369,7 +402,7 @@ const ViewEditProfile = ({ navigation, edit }) => {
                         title={'User profile updated successfully.'}
                         onDone={() => {
                             setPopup(false);
-                            navigation.goBack();
+                            navigation.navigate('Home');
                         }}
                     />
                 }

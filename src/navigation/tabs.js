@@ -99,6 +99,18 @@ const TabNav = () => {
             headerTitle: 'Documents',
             headerTitleStyle: routeStyles.headerTitleStyle,
             headerTitleAlign: 'center',
+            headerLeft:()=>(
+              <TouchableOpacity
+                style={[commonStyle.screenPadding]}
+                onPress={() => {
+                  navigation.navigate('Home')}}>
+                <Image
+                   source={require('../assets/images/headerBack.png')}
+                  resizeMode={'contain'}
+                  style={styles.profileEditIcon}
+                />
+              </TouchableOpacity>
+            ),
             headerRight: () => (
               <TouchableOpacity
                 style={[commonStyle.screenPadding]}
@@ -112,7 +124,7 @@ const TabNav = () => {
               </TouchableOpacity>
             ),
           }}}
-          name="Contact"
+          name="Licences"
           component={Document} //IncidentForm //Licences
         />
 

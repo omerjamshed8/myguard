@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MyStack from './src/navigation/stack';
 import AppHOC from './src/hoc';
 import FlashMessage from 'react-native-flash-message';
@@ -7,7 +7,8 @@ import { Animated, Dimensions, StyleSheet, Text, TextInput, View } from 'react-n
 import { requestUserPermission, notificationListener } from './src/screens/notificationServices';
 import UnavailContextProvider from 'contexts/UnavailContext';
 import DocsContextProvider from 'contexts/DocsContext';
-// import AnimatedSplash from "react-native-animated-splash-screen";
+import AnimatedSplash from 'screens/animatedsplash';
+
 // import "./src/screens/ignorewarnings";
 console.disableYellowBox = true;
 TextInput.defaultProps = TextInput.defaultProps || {};
@@ -16,28 +17,35 @@ Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 export default function App() {
 
-  const moveAnim=useRef(new Animated.Value(0)).current;
-  const fadeAnim=useRef(new Animated.Value(0)).current;
+  const [showComponent, setshowComponent] = useState(true)
 
 
   useEffect(() => {
     requestUserPermission();
     notificationListener();
-    }, []);
+
+    setTimeout(() => {
+      setshowComponent(!showComponent)
+    }, 5000);
+  }, []);
 
   return (
-    <DocsContextProvider>
-      <UnavailContextProvider>
-        <AppHOC>
-          <MyStack />
-          <FlashMessage position={'bottom'} backgroundColor={Colors.primary}/>
-        </AppHOC>
-      </UnavailContextProvider>
-    </DocsContextProvider>
+    <>
+      {showComponent ? <AnimatedSplash /> :
+        <DocsContextProvider>
+          <UnavailContextProvider>
+            <AppHOC>
+              <MyStack />
+              <FlashMessage position={'bottom'} backgroundColor={Colors.primary} />
+            </AppHOC>
+          </UnavailContextProvider>
+        </DocsContextProvider>
+      }
+    </>
   );
 }
 
-const styles=StyleSheet.create({
+const styles = StyleSheet.create({
   logoText: {
     fontSize: 35,
     marginTop: 20,

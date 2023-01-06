@@ -70,23 +70,33 @@ function EditIncident({ route, navigation }) {
   const { props } = route.params;
   console.log("Props in editincident", props)
 
-  const [fname, onChangefname] = React.useState(props?.formName);
-  const [reqaction, onChangereqaction] = React.useState(props?.requiredAction);
+  const [fname, onChangefname] = React.useState(props?.formName||'');
+  const [reqaction, onChangereqaction] = React.useState(props?.requiredAction||'');
   const [reqAction, onChangereqAction] = React.useState('');
-  const [desc, onChangedesc] = React.useState(props?.description);
+  const [desc, onChangedesc] = React.useState(props?.description||'');
   const [responses, setresponses] = useState([])
   const [customer, setcustomer] = useState('');
   const [file, onchangeFile] = useState('');
   const [video, onchangeVideo] = useState('')
   const [isPopup, setPopup] = useState(false);
   const [siteid, setSiteId] = useState('')
+  const [cust,setcust]=useState(props?.Customer?.name||'')
+  const [custId,setcustId]=useState('')
+  const [sitename,setsitename]=useState(props?.Site?.name||'')
+  const [siteId,setSiteid]=useState('')
 
+
+  const converttostring = (id) => {
+    let value = id.toString()
+    return value;
+  }
   const site = siteid ? siteid.map((item, index) => (
-    { label: item?.name, value: item?.id }
+    { label: item?.name, value: converttostring(item?.id) }
   )) : null
+  console.log(site)
 
   const customers = customer ? customer.map((item, index) => (
-    { label: item?.name, value: item?.id }
+    { label: item?.name, value: converttostring(item?.id) }
   )) : null
 
   console.log("video url got in incidentform", video)
@@ -114,28 +124,28 @@ function EditIncident({ route, navigation }) {
     if (validator.isEmpty(fname)) {
       return showError("Form name is required")
     }
-    else if (!validator.isAlpha(fname)) {
+    if (!validator.isAlpha(fname,'en-US', { ignore: ' ' })) {
       return showError("Form name should be in alphabetical form")
     }
-    else if (!validator.isLength(fname, 3, 50)) {
+    if (!validator.isLength(fname, 3, 50)) {
       return showError("Form name should be between 3 to 50 alphabets")
     }
-    else if (validator.isEmpty(reqaction)) {
+    if (validator.isEmpty(reqaction)) {
       return showError("Action is required")
     }
-    else if (!validator.isAlpha(reqaction)) {
+    if (!validator.isAlpha(reqaction,'en-US', { ignore: ' ' })) {
       return showError("Required Action should be in alphabetical form")
     }
-    else if (!validator.isLength(reqaction, 3, 50)) {
+    if (!validator.isLength(reqaction, 3, 50)) {
       return showError("Required Action should be between 3 to 50 alphabets")
     }
-    else if (validator.isEmpty(desc)) {
+    if (validator.isEmpty(desc)) {
       return showError("Description is required")
     }
-    else if (!validator.isAlphanumeric(desc)) {
+    if (!validator.isAlphanumeric(desc,'en-US', { ignore: ' ~!@#$%^&*()-_+={}[]|/\:;"<>,.?' })) {
       return showError("Description should be in alphabetical form")
     }
-    else if (!validator.isLength(desc, 3, 1000)) {
+    if (!validator.isLength(desc, 3, 1000)) {
       return showError("Description should be between 3 to 1000 characters")
     }
 
@@ -181,7 +191,10 @@ function EditIncident({ route, navigation }) {
         <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: '5%', marginTop: "20%" }}>
           <View>
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Customer Name</Text>
-            <Dropdowns width={Dimensions.get('window').width - 40} ph={props?.Customer?.name} data={customers} />
+            <Dropdowns width={Dimensions.get('window').width - 40} ph={cust?cust:"Name"} data={customers} onchange={(custom,id)=>{
+              setcust(custom);
+              setcustId(id);
+            }}/>
             {/* <CustomInput
               value={names}
               placeholder="Name"
@@ -191,7 +204,10 @@ function EditIncident({ route, navigation }) {
 
             <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Select Site</Text>
             <View>
-              <Dropdowns width={Dimensions.get('window').width - 40} ph={props?.Site?.name} data={site} />
+              <Dropdowns width={Dimensions.get('window').width - 40} ph={sitename?sitename:"Site name"} data={site} onchange={(custom,id)=>{
+              setsitename(custom);
+              setSiteid(id);
+            }}/>
             </View>
             {/* <CustomInput
               value={entry}

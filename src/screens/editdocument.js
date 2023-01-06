@@ -35,6 +35,13 @@ function EditDocument({ route, navigation }) {
     console.log("Props in EditDocument", props)
     console.log("props id", props)
 
+    const dateconverter = (date) => {
+        createdat = new Date(date)
+        var month = createdat.toLocaleString('default', { month: 'short' });
+        newdate=createdat.getFullYear() + '-' + month + '-' + createdat.getDate()          //createdat.getMonth() + 1
+        return newdate
+    }
+
     const [text, onChangeText] = React.useState('Full Name');
     const [names, onChangeName] = React.useState(props.Document.name);
     const [entry, onChangeentry] = React.useState(props.Document.type ? props.Document.type : '');
@@ -46,7 +53,7 @@ function EditDocument({ route, navigation }) {
     const [note, setnote] = useState(props?.Document?.note);
     const [file, setfile] = useState([]);
     const [pressed, setpressed] = useState(false)
-    const [date, setdate] = useState(props.Document.expiryDate ? props.Document.expiryDate : '')
+    const [date, setdate] = useState(props.Document.expiryDate ? dateconverter(props.Document.expiryDate) : '')
     const [succed, setsucced] = useState(false)
     const [isPopup, setPopup] = useState(false);
 
@@ -62,7 +69,7 @@ function EditDocument({ route, navigation }) {
         if (validator.isEmpty(names)) {
             return showError("Name field is required")
         }
-        else if (!validator.isAlpha(names)) {
+        else if (!validator.isAlpha(names,'en-US',{ignore:' '})) {
             return showError("name should be in alphabets")
           }
           else if (!validator.isLength(names, 3, 20)) {
@@ -70,16 +77,18 @@ function EditDocument({ route, navigation }) {
           }
         else if (validator.isEmpty(entry)) {
             return showError("Document type is required")
-        }
+        }  else if (!validator.isAlpha(entry,'en-US',{ignore:' '})) {
+            return showError("Document type should be in alphabetical form")
+        }   
         else if (validator.isEmpty(date)) {
             return showError("Date is required")
         }
         else if (validator.isEmpty(note)) {
             return showError("Note is required")
         }
-        else if (validator.isEmpty(file[0]?.uri)) {
-            return showError("File is required");
-        }
+        // else if (validator.isEmpty(file[0]?.uri)) {
+        //     return showError("File is required");
+        // }
         else {
             setsucced(true)
             axios.put(
@@ -89,7 +98,7 @@ function EditDocument({ route, navigation }) {
                     type: entry,
                     expiryDate: date,
                     note: note,
-                    url: file.uri
+                    url: file.uri||''
 
                 }
             ).then(res => {
@@ -127,6 +136,7 @@ function EditDocument({ route, navigation }) {
                 throw error;
             }
         }
+        
     }
     return (
         <SafeAreaView style={styles.splashView}>
@@ -134,11 +144,11 @@ function EditDocument({ route, navigation }) {
                 style={styles.container}
                 contentContainerStyle={styles.contentContainer}>
 
-                {/* <View style={{justifyContent:'center',alignItems:'center'}}>
-                <Text style={{color:'#2A2D43',margin:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
-            </View> */}
+                <View style={{alignItems:'center'}}>
+                <Text style={{color:'#2A2D43',marginTop:30,fontSize:15,fontWeight:'600'}}>New Incident</Text>
+            </View>
                 {/* Input Wrapper */}
-                <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "20%" }}>
+                <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "10%" }}>
                     <View>
                         <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Name</Text>
                         <CustomInput
@@ -166,7 +176,7 @@ function EditDocument({ route, navigation }) {
             /> */}
 
                         <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Expiry Date</Text>
-                        <DatePick width={"100%"} open={true} calendarbgcolor={"#FFFFFF"} onChange={(date) => {
+                        <DatePick date={date?date:dateconverter(props.Document.expiryDate)} width={"100%"} open={true} calendarbgcolor={"#FFFFFF"} onChange={(date) => {
                             setdate(date)
                         }} />
                         {/* <CustomInput

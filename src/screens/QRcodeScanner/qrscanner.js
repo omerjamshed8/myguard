@@ -13,8 +13,9 @@ import { RNCamera } from 'react-native-camera';
 import { useState } from 'react';
 import axios from 'axios';
 
-export default function QRScanner({navigation}) {
-
+export default function QRScanner({empid}) {
+  // const {props}=route.params;
+  console.log(empid)
   var hours = new Date().getHours(); //To get the Current Hours
   var min = new Date().getMinutes(); //To get the Current Minutes
   var sec = new Date().getSeconds(); //To get the Current Seconds
@@ -28,7 +29,7 @@ export default function QRScanner({navigation}) {
     setTime(hours + ":" + min + ":" + sec)
     // console.log(time)
     axios.post(
-      "https://securitylinksapi.herokuapp.com/api/v1/employee/13/scan-attendance/create",
+      `https://securitylinksapi.herokuapp.com/api/v1/employee/${empid}/scan-attendance/create`,
       {
         scannedTime: new Date().toISOString(),
       }
