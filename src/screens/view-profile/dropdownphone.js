@@ -16,6 +16,8 @@ import {PhoneInputState} from 'react-native-phone-number-input';
 import PhoneInput from 'react-native-phone-number-input';
 const Countryinput = ({disabled,onchange,value}) => {
   console.log("value",value)
+  let inputval=value.toString()
+  console.log("Input num in string",inputval);
   const phoneInput = useRef(null);
   console.log(phoneInput);
   useEffect(() => {
@@ -74,6 +76,7 @@ const Countryinput = ({disabled,onchange,value}) => {
             borderColor: '#000',
           }}></TouchableOpacity> */}
         <PhoneInput
+          value={value}
           placeholder={value}
           disabled={disabled}
           onChangeText={text=>setnum(text)}
@@ -90,7 +93,7 @@ const Countryinput = ({disabled,onchange,value}) => {
               overflow: 'hidden',
             },
           ]}
-          textInputProps={value={value}}
+          // textInputProps={value={value}}
           disableArrowIcon
           onChangeCountry={setcountrycode}
           textInputStyle={{

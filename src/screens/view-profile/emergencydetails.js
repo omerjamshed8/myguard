@@ -25,10 +25,12 @@ import _ from 'lodash';
 import Dropdowns from './dropdownpicker';
 import { useEffect } from 'react';
 import axios from 'axios';
+import Countries from 'assets1/countries';
 
-const EmergencyDetails = ({ navigation }) => {
-    const {  user } = useUser();
-    const [emergencydetails,setemergencydetails]=useState(user?.UserProfile?.emergencydetails);
+const EmergencyDetails = ({ edit, navigation }) => {
+    const { user, getUserID } = useUser();
+    const userID = getUserID()
+    const [emergencydetails, setemergencydetails] = useState(user?.UserProfile?.emergencydetails);
     const [emergencynumber, onChangeemergencynumber] = React.useState(user?.UserProfile?.emergencynumber || '');
     const [address, onChangeAddress] = React.useState(
         user?.UserProfile?.address || '',
@@ -37,9 +39,9 @@ const EmergencyDetails = ({ navigation }) => {
     const [state, onChangestate] = React.useState(
         user?.UserProfile?.state || '',
     );
-      const [postalcode, onChangePostalcode] = React.useState(
+    const [postalcode, onChangePostalcode] = React.useState(
         user?.UserProfile?.postalCode || '',
-      );
+    );
     // const [dob, onChangeDob] = React.useState(
     //     user?.UserProfile?.dateOfBirth || '',
     // );
@@ -50,19 +52,21 @@ const EmergencyDetails = ({ navigation }) => {
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
-    const [responses,setresponses]=useState()
-    const [data,setdata]=useState()
+    const [responses, setresponses] = useState()
+    const [data, setdata] = useState()
 
+    const [employeeId, setemployeeid] = useState('')
 
     const onClosePicker = () => setPicker(false);
 
     useEffect(() => {
         axios.get(
-            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
+            `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`,
         ).then(res => {
             // console.log('successfully get response in profilejs of view-profile')
             // console.log("!!!!!!!!!>>>>>>>>>", res?.data?.employee)
             setresponses(res?.data?.employee)
+            setemployeeid(res?.data?.employee?.id)
             setdata(res?.data?.employee)
             setemergencydetails(res?.data?.employee?.EmployeeHrDetail?.emergencyDetails)
             onChangeemergencynumber(res?.data?.employee?.phone)
@@ -78,50 +82,143 @@ const EmergencyDetails = ({ navigation }) => {
         })
     }, [])
 
+    const countries = Countries.map((item, index) => { return { label: item.country, value: index.toString() } })
+    const selectedCountry = Countries.find(item => item.country === country)
+    console.log('selectedCountry')
+    console.log(selectedCountry)
+    let states = []
+    if (selectedCountry) {
+        states = selectedCountry.states.map((state, index) => ({ label: state, value: index.toString() }))
+    }
+
     const onSave = async () => {
         Keyboard.dismiss();
-        if (validator.isEmpty(Fullname)) {
-            return showError('The full name is required');
+        if (validator.isEmpty(emergencydetails)) {
+            return showError('Emergency Details is required');
+        } else if (!validator.isAlpha(emergencydetails, 'en-US', { ignore: '' })) {
+            return showError('The emergency details should be in alphabetical format');
+        } else if (!validator.isLength(emergencydetails, 3, 50)) {
+            return showError('The emergency details should be between 3 to 50 alphabets');
+        } else if (!validator.isLength(emergencynumber, 7, 15)) {
+            return showError('The emergency number should be between 7 to 15 digits');
+        } else if (!validator.isNumeric(emergencynumber)) {
+            return showError('The emergency number should be in numerical format');
+        } else if (validator.isEmpty(address)) {
+            return showError('The address is required');
+        } else if (!validator.isAlphanumeric(address, 'en-US', { ignore: ' ,-#' })) {
+            return showError("Address should be in alpha numeric form")
         }
-        // else if (validator.isEmpty(emergencynumber)) {
-        //   return showError('The emergencynumber number is required');
-        // } else if (validator.isEmpty(address)) {
-        //   return showError('The address is required');
-        // } else if (validator.isEmpty(city)) {
-        //   return showError('The city is required');
-        // } else if (validator.isEmpty(state)) {
-        //   return showError('The state is required');
-        // } else if (validator.isEmpty(postalcode)) {
-        //   return showError('The postalcode is required');
-        // }  else if (validator.isEmpty(dob)) {
-        //   return showError('The date of birth is required');
+        else if (!validator.isLength(address, 1, 100)) {
+            return showError("Address should be between 1 to 100 alphabets")
+        } else if (validator.isEmpty(city)) {
+            return showError('The city is required');
+        } else if (!validator.isAlpha(city)) {
+            return showError("City should be in alphabetical form")
+        }
+        else if (!validator.isLength(city, 2, 20)) {
+            return showError("City should be between 2 to 20 alphabets")
+        }
+        else if (validator.isEmpty(postalcode)) {
+            return showError('PostalCode is required');
+        } else if (!validator.isNumeric(postalcode)) {
+            return showError('The postalcode should be in numerical format');
+        } else if (!validator.isLength(postalcode, 4, 10)) {
+            return showError('Zip/Postal code should be between 4 to 10 digits');
+        }
+
+        // let payload = {
+        //     address,
+        //     city,
+        //     state,
+        //     postalCode: postalcode,
+        //     dateOfBirth: dob ? new Date(dob).toISOString() : '',
+        //     countryCode: '+92',
+        //     fullName: Fullname,
+        //     emergencynumber,
+        // };
+        // setLoading(true);
+        // try {
+        //     const response = await updateProfile(payload);
+
+        //     if (response?.success) {
+        //         getUserDetail();
+        //         setPopup(true);
+        //         // navigation.goBack();
+        //         // showSuccess('User profile updated successfully.');
+        //     }
+        //     setLoading(false);
+        // } catch (error) {
+        //     setLoading(false);
         // }
 
-        let payload = {
-            address,
-            city,
-            state,
-            postalCode: postalcode,
-            dateOfBirth: dob ? new Date(dob).toISOString() : '',
-            countryCode: '+92',
-            fullName: Fullname,
-            emergencynumber,
-        };
-        setLoading(true);
-        try {
-            const response = await updateProfile(payload);
-
-            if (response?.success) {
-                getUserDetail();
-                setPopup(true);
-                // navigation.goBack();
-                // showSuccess('User profile updated successfully.');
+        axios.put(
+            `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${employeeId}`,
+            {
+                emergencyDetails: emergencydetails,
+                emergencyNumber: emergencynumber,
+                address: address,
+                country: country,
+                state: state,
+                city: city,
+                postalCode: postalcode
             }
-            setLoading(false);
-        } catch (error) {
-            setLoading(false);
-        }
+        ).then(res => {
+            if (res?.status === 200) {
+                setPopup(true)
+            }
+            console.log('updated successfully')
+            console.log(res)
+            console.log('success')
+            console.log(res)
+        }).catch(e => {
+            console.log('error')
+            console.log(e.response.data)
+        })
     };
+    // const onSave = async () => {
+    //     Keyboard.dismiss();
+    //     if (validator.isEmpty(Fullname)) {
+    //         return showError('The full name is required');
+    //     }
+    //     // else if (validator.isEmpty(emergencynumber)) {
+    //     //   return showError('The emergencynumber number is required');
+    //     // } else if (validator.isEmpty(address)) {
+    //     //   return showError('The address is required');
+    //     // } else if (validator.isEmpty(city)) {
+    //     //   return showError('The city is required');
+    //     // } else if (validator.isEmpty(state)) {
+    //     //   return showError('The state is required');
+    //     // } else if (validator.isEmpty(postalcode)) {
+    //     //   return showError('The postalcode is required');
+    //     // }  else if (validator.isEmpty(dob)) {
+    //     //   return showError('The date of birth is required');
+    //     // }
+
+    //     let payload = {
+    //         address,
+    //         city,
+    //         state,
+    //         postalCode: postalcode,
+    //         dateOfBirth: dob ? new Date(dob).toISOString() : '',
+    //         countryCode: '+92',
+    //         fullName: Fullname,
+    //         emergencynumber,
+    //     };
+    //     setLoading(true);
+    //     try {
+    //         const response = await updateProfile(payload);
+
+    //         if (response?.success) {
+    //             getUserDetail();
+    //             setPopup(true);
+    //             // navigation.goBack();
+    //             // showSuccess('User profile updated successfully.');
+    //         }
+    //         setLoading(false);
+    //     } catch (error) {
+    //         setLoading(false);
+    //     }
+    // };
 
     const onUpdateProfile = async () => {
         // if (!image) {
@@ -142,20 +239,22 @@ const EmergencyDetails = ({ navigation }) => {
 
     return (
         <Screen>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}> 
                 <View style={{ marginTop: "30%" }} />
                 <TextInput
                     value={emergencydetails}
                     placeholder="Emergency Details"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={setemergencydetails}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
 
-               <TextInput
+                <TextInput
                     value={emergencynumber}
                     placeholder="Emergency Number"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={onChangeemergencynumber}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
@@ -163,31 +262,55 @@ const EmergencyDetails = ({ navigation }) => {
                 <TextInput
                     value={address}
                     placeholder="Address"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={onChangeAddress}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
 
                 <View style={styles.postalCodeWrapper}>
-                    <Dropdowns ph={country?country:'Country'} disable={true}/>
-                    <Dropdowns ph={state?state:'State'} disable={true}/>
+                    <Dropdowns ph={country ? country : 'Country'} data={countries} disable={!edit} onchange={(statee) => {
+                        onChangecountry(statee)
+                    }} />
+                    <Dropdowns ph={state ? state : 'State'} data={states} disable={!edit} onchange={(countryy) => {
+                        onChangestate(countryy)
+                    }} />
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                <TextInput
-                    value={city}
-                    placeholder="City"
-                    editable={false}
-                    style={[styles.viewinput,{width:"50%",height:"70%"}]}
-                    placeholderTextColor={colors.twoATwoD}
-                />
-                   <TextInput
-                    value={postalcode}
-                    placeholder="Zip/Postal Code"
-                    editable={false}
-                    style={[styles.viewinput,{width:"48%",height:"70%"}]}
-                    placeholderTextColor={colors.twoATwoD}
-                />
+                    <TextInput
+                        value={city}
+                        placeholder="City"
+                        editable={edit}
+                        onChangeText={onChangeCity}
+                        style={[styles.viewinput, { width: "50%", height: "70%" }]}
+                        placeholderTextColor={colors.twoATwoD}
+                    />
+                    <TextInput
+                        value={postalcode}
+                        placeholder="Zip/Postal Code"
+                        editable={edit}
+                        onChangeText={onChangePostalcode}
+                        style={[styles.viewinput, { width: "48%", height: "70%" }]}
+                        placeholderTextColor={colors.twoATwoD}
+                    />
                 </View>
+
+                {
+                    edit === true
+                        ?
+                        <>
+                            <CustomButton
+                                isLoading={isLoading}
+                                // onButtonPress={onSave}
+                                onButtonPress={onSave}
+                                title={'Save Changes'}
+                                buttonWrapper={{ marginTop: 30 }}
+                            />
+                            <Text style={styles.cancelText} onPress={() => navigation.goBack()}>
+                                Cancel
+                            </Text>
+                        </> : null
+                }
             </ScrollView>
 
             <CommonModal
@@ -204,7 +327,7 @@ const EmergencyDetails = ({ navigation }) => {
                 isVisible={isPopup}
                 component={
                     <ResetSuccess
-                        title={'User profile updated successfully.'}
+                        title={'Emergency details updated successfully.'}
                         onDone={() => {
                             setPopup(false);
                             navigation.goBack();

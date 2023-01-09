@@ -1,5 +1,5 @@
-import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import React, { useEffect } from 'react';
+import {Alert, Text, TouchableOpacity, View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import EditProfile from './profile';
@@ -8,11 +8,12 @@ import EmergencyDetails from './emergencydetails';
 
 const Tab = createMaterialTopTabNavigator();
 
-const ProfileTabNav = ({screen1,screen2,screen3,edit}) => {
-  screen1='Profile';
-  screen2='Emergency Details';
-  screen3='Banking Details';
-  console.log("??????????????????????????",edit)
+const ProfileTabNav = ({route,navigation}) => {
+  const {edit}=route.params;
+  let screen1='Profile';
+  let screen2='Emergency Details';
+  let screen3='Banking Details';
+    // Alert.alert("Edit value",`edit value: ${edit}`)
 
   return (
     <NavigationContainer independent={true}>
@@ -70,9 +71,9 @@ const ProfileTabNav = ({screen1,screen2,screen3,edit}) => {
             </View>
           );
         }}>
-          {screen1 && <Tab.Screen name={screen1} component={EditProfile} />}
-        {screen2 && <Tab.Screen name={screen2} component={EmergencyDetails} />}
-        {screen3 && <Tab.Screen name={screen3} component={BankingDetails} />}
+          {screen1 && <Tab.Screen name={screen1} children={()=><EditProfile edit={edit} navigation={navigation} />} />}
+        {screen2 && <Tab.Screen name={screen2} children={()=><EmergencyDetails edit={edit} navigation={navigation}/>} />}
+        {screen3 && <Tab.Screen name={screen3} children={()=><BankingDetails edit={edit} navigation={navigation}/>}/>}
       </Tab.Navigator>
     </NavigationContainer>
   );

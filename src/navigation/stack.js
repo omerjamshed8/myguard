@@ -7,7 +7,7 @@ import Splash from 'screens/splash';
 import { useSelector } from 'react-redux';
 import TabNav from './tabs';
 import EditProfile from 'screens/profile/edit-profile';
-import { Image, TouchableOpacity, StyleSheet, Text, Animated, Dimensions, View } from 'react-native';
+import { Image, TouchableOpacity, StyleSheet, Text, Animated, Dimensions, View, Alert } from 'react-native';
 import { commonStyle } from 'theme';
 import { Images } from 'theme';
 import SplashScreen from 'react-native-splash-screen';
@@ -42,14 +42,15 @@ import GuardHome from 'screens/guardhome';
 
 const Stack = createStackNavigator();
 
-const edit = createContext()
+// const edit = createContext()
 
 export default function MyStack() {
   const { accessToken } = useSelector(state => {
     console.log(state, "stae")
     return state.auth
   });
-  //  const [edit,setedit]=useState(false);
+   const [edit,setedit]=useState(false);
+   console.log("Edit value---------------------",edit)
   console.log(accessToken, "accessTokenPPPPP")
   useEffect(() => {
     setTimeout(() => {
@@ -334,7 +335,7 @@ export default function MyStack() {
                 ),
               }}
             />
-            <Stack.Screen name='ViewProfile' component={ProfileTabNav} initialParams={edit}
+            <Stack.Screen name='ViewProfile' component={ProfileTabNav} initialParams={{edit:edit}}
               options={({ route, navigation }) => ({
                 headerShown: true,
                 headerStyle: routeStyles.headerStyle,
@@ -352,9 +353,12 @@ export default function MyStack() {
                   <TouchableOpacity
                     style={[commonStyle.screenPadding]}
                     onPress={() => {
-                      // setedit(!edit)
-                      navigation.navigate('ViewProfileTabNav')   //editProfile pehlay yeh tha
-                      console.log("pressed")
+                      setedit(!edit)
+                      navigation.setParams({
+                        edit:!edit
+                      })
+                      // navigation.navigate('ViewProfileTabNav')   //editProfile pehlay yeh tha
+                      // console.log("pressed")
                     }}>
 
                     {/* <Image

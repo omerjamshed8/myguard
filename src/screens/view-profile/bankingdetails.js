@@ -24,8 +24,9 @@ import ResetSuccess from 'components/reset-success';
 import _ from 'lodash';
 import axios from 'axios';
 
-const BankingDetails = ({ navigation }) => {
-    const { user } = useUser();
+const BankingDetails = ({ edit, navigation }) => {
+    const { user, getUserID } = useUser();
+    const userID = getUserID()
     const [bankname, setbankname] = useState(user?.UserProfile?.bankname);
     const [accountname, onChangeaccountname] = React.useState();
     const [BSB, onChangeBSB] = React.useState(
@@ -48,20 +49,22 @@ const BankingDetails = ({ navigation }) => {
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
-    const [responses,setresponses]=useState()
+    const [responses, setresponses] = useState()
+    const [employeeId, setemployeeid] = useState('')
 
     const onClosePicker = () => setPicker(false);
 
     useEffect(() => {
         axios.get(
-            "https://securitylinksapi.herokuapp.com/api/v1/employee/profile/135",
+            `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`,
         ).then(res => {
             console.log('successfully get response in bankingdetailsjs of bankingdetails.js')
             console.log("!!!!!!!!!>>>>!!!!!!!!>>>>>", res?.data?.employee?.EmployeeHrDetail?.bankName)
             setresponses(res?.data?.employee)
+            setemployeeid(res?.data?.employee?.id)
             setbankname(res?.data?.employee?.EmployeeHrDetail?.bankName)
             onChangeaccountname(res?.data?.employee?.EmployeeHrDetail?.accountName)
-            console.log("EmployeeHrDetails*******",res?.data?.employee?.EmployeeHrDetail?.Location);
+            console.log("EmployeeHrDetails*******", res?.data?.employee?.EmployeeHrDetail?.Location);
             onChangeBSB(res?.data?.employee?.EmployeeHrDetail?.bsb)
             onChangeaccountnumber(res?.data?.employee?.EmployeeHrDetail?.accountNumber)
         }).catch(e => {
@@ -72,48 +75,122 @@ const BankingDetails = ({ navigation }) => {
 
     const onSave = async () => {
         Keyboard.dismiss();
-        // if (validator.isEmpty(Fullname)) {
-        //     return showError('The full name is required');
-        // }
-        // else if (validator.isEmpty(accountname)) {
-        //   return showError('The accountname number is required');
-        // } else if (validator.isEmpty(address)) {
-        //   return showError('The address is required');
-        // } else if (validator.isEmpty(city)) {
-        //   return showError('The city is required');
-        // } else if (validator.isEmpty(state)) {
-        //   return showError('The state is required');
-        // } else if (validator.isEmpty(postalcode)) {
-        //   return showError('The postalcode is required');
-        // }  else if (validator.isEmpty(dob)) {
-        //   return showError('The date of birth is required');
-        // }
+        if (validator.isEmpty(bankname)) {
+            return showError('Bank name is required');
+        }
+        else if (!validator.isLength(bankname, 3, 50)) {
+            return showError('Bank name should be between 3 to 50 alphabets');
+        } else if (!validator.isAlpha(bankname, 'en-US', { ignore: ' ' })) {
+            return showError('Bank name should be in alphabetical format');
+        } else if (!validator.isLength(accountname, 3, 50)) {
+            return showError('Account name should be between 3 to 50 alphabets');
+        } else if (!validator.isAlpha(accountname, 'en-US', { ignore: ' ' })) {
+            return showError('The account name should be in alphabetical format');
+        } else if (validator.isEmpty(BSB)) {
+            return showError('BSB is required');
+        } else if (!validator.isNumeric(BSB)) {
+            return showError("BSB should be in numeric form")
+        }
+        else if (!validator.isLength(BSB, 4, 10)) {
+            return showError("BSB should be between 4 to 10 digits")
+        } else if (validator.isEmpty(accountnumber)) {
+            return showError('Account number is required');
+        } else if (!validator.isNumeric(accountnumber)) {
+            return showError("Account number should be in numeric form")
+        }
+        else if (!validator.isLength(accountnumber, 6, 30)) {
+            return showError("Account number should be between 6 to 30 digits")
+        }
+        else {
 
-        // let payload = {
-        //     BSB,
-        //     accountnumber,
-        //     state,
-        //     postalCode: postalcode,
-        //     dateOfBirth: dob ? new Date(dob).toISOString() : '',
-        //     countryCode: '+92',
-        //     fullName: Fullname,
-        //     accountname,
-        // };
-        // setLoading(true);
-        // try {
-        //     const response = await updateProfile(payload);
 
-        //     if (response?.success) {
-        //         getUserDetail();
-        //         setPopup(true);
-        //         // navigation.goBack();
-        //         // showSuccess('User profile updated successfully.');
-        //     }
-        //     setLoading(false);
-        // } catch (error) {
-        //     setLoading(false);
-        // }
+            // let payload = {
+            //     BSB,
+            //     accountnumber,
+            //     state,
+            //     postalCode: postalcode,
+            //     dateOfBirth: dob ? new Date(dob).toISOString() : '',
+            //     countryCode: '+92',
+            //     fullName: Fullname,
+            //     accountname,
+            // };
+            // setLoading(true);
+            // try {
+            //     const response = await updateProfile(payload);
+
+            //     if (response?.success) {
+            //         getUserDetail();
+            //         setPopup(true);
+            //         // navigation.goBack();
+            //         // showSuccess('User profile updated successfully.');
+            //     }
+            //     setLoading(false);
+            // } catch (error) {
+            //     setLoading(false);
+            // }
+            axios.put(
+                `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${employeeId}`,
+                {
+                    bankName: bankname,
+                    accountName: accountname,
+                    bsb: BSB,
+                    accountNumber: accountnumber
+                }
+            ).then(res => {
+                if (res?.status === 200) {
+                    setPopup(true)
+                }
+                console.log('updated successfully')
+                console.log(res)
+                console.log('success')
+                console.log(res)
+            }).catch(e => {
+                console.log('error')
+                console.log(e.response.data)
+            })
+        }
     };
+    // if (validator.isEmpty(Fullname)) {
+    //     return showError('The full name is required');
+    // }
+    // else if (validator.isEmpty(accountname)) {
+    //   return showError('The accountname number is required');
+    // } else if (validator.isEmpty(address)) {
+    //   return showError('The address is required');
+    // } else if (validator.isEmpty(city)) {
+    //   return showError('The city is required');
+    // } else if (validator.isEmpty(state)) {
+    //   return showError('The state is required');
+    // } else if (validator.isEmpty(postalcode)) {
+    //   return showError('The postalcode is required');
+    // }  else if (validator.isEmpty(dob)) {
+    //   return showError('The date of birth is required');
+    // }
+
+    // let payload = {
+    //     BSB,
+    //     accountnumber,
+    //     state,
+    //     postalCode: postalcode,
+    //     dateOfBirth: dob ? new Date(dob).toISOString() : '',
+    //     countryCode: '+92',
+    //     fullName: Fullname,
+    //     accountname,
+    // };
+    // setLoading(true);
+    // try {
+    //     const response = await updateProfile(payload);
+
+    //     if (response?.success) {
+    //         getUserDetail();
+    //         setPopup(true);
+    //         // navigation.goBack();
+    //         // showSuccess('User profile updated successfully.');
+    //     }
+    //     setLoading(false);
+    // } catch (error) {
+    //     setLoading(false);
+    // }
 
     const onUpdateProfile = async () => {
         // if (!image) {
@@ -134,12 +211,13 @@ const BankingDetails = ({ navigation }) => {
 
     return (
         <Screen>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{ marginTop: "30%" }} />
                 <TextInput
                     value={bankname}
                     placeholder="Bank Name"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={setbankname}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
@@ -147,7 +225,8 @@ const BankingDetails = ({ navigation }) => {
                 <TextInput
                     value={accountname}
                     placeholder="Account Name"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={onChangeaccountname}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
@@ -155,18 +234,39 @@ const BankingDetails = ({ navigation }) => {
                 <TextInput
                     value={BSB}
                     placeholder="BSB"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={onChangeBSB}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
                 <TextInput
                     value={accountnumber}
                     placeholder="Account Number"
-                    editable={false}
+                    editable={edit}
+                    onChangeText={onChangeaccountnumber}
                     style={styles.viewinput}
                     placeholderTextColor={colors.twoATwoD}
                 />
 
+                {
+                    edit === true
+                        ?
+                        <>
+                            <CustomButton
+                                isLoading={isLoading}
+                                // onButtonPress={onSave}
+                                onButtonPress={onSave}
+                                title={'Save Changes'}
+                                buttonWrapper={{ marginTop: 30 }}
+                            />
+                           <Text style={styles.cancelText} onPress={() => navigation.goBack()}>
+                                Cancel
+                            </Text>
+                        </> : null
+                }
+                <View style={{marginBottom:30}}>
+                    
+                </View>
             </ScrollView>
 
             <CommonModal
@@ -183,7 +283,7 @@ const BankingDetails = ({ navigation }) => {
                 isVisible={isPopup}
                 component={
                     <ResetSuccess
-                        title={'User profile updated successfully.'}
+                        title={'Banking details updated successfully.'}
                         onDone={() => {
                             setPopup(false);
                             navigation.goBack();
