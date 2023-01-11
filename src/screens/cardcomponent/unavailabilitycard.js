@@ -127,9 +127,17 @@ export default function UnavailabilityCard({ navigation }) {
         setcopy(arr)
     }
 
+    var createdat;
+    const dateconverter = (date) => {
+        createdat = new Date(date)
+        var month = createdat.toLocaleString('default', { month: 'short' });
+        newdate = createdat.getFullYear() + ' ' + month + ' ' + createdat.getDate()          //createdat.getMonth() + 1
+        return newdate
+    }
+
     return (
         <SafeAreaView style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-            <View style={{justifyContent:'center',marginTop:-24}}>
+            <View style={{justifyContent:'center',marginTop:-19}}>
             <Dropdowns width={Dimensions.get('window').width} bgcolor="#F2385F" ph={"All"} phcolor={"white"} borderradius={-1} data={dataa}
                 onchange={(label)=>{
                     // setLabel(label)

@@ -31,8 +31,9 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import { useIsFocused } from '@react-navigation/native';
 import Countries from 'assets1/countries';
+import PhoneInput from 'react-native-phone-number-input';
 
-const EditProfile = ({ edit,navigation }) => {
+const EditProfile = ({ edit, navigation }) => {
     // const {edit}=route.params
     // Alert.alert("Edit value",`edit value: ${edit}`)
     console.log("Edit value is", edit);
@@ -42,10 +43,20 @@ const EditProfile = ({ edit,navigation }) => {
     const [responses, setresponses] = useState('')
     const [data, setdata] = useState('')
 
+
+
     const [Fullname, onChangeName] = React.useState(responses?.name || '');      //getUserFullName()
-    const [phone, onChangePhone] = React.useState(responses?.phone?responses.phone:'');            //getUserPhone()
-    const [number, onChangenumber] = useState('')
+    const [phone, onChangePhone] = React.useState(responses?.phone ? responses.phone : '');            //getUserPhone()
+    const phonearr = phone?.slice(0, 2)
+    console.log("*****************", phonearr)
+    const [c_code, onChangec_code] = useState('')
+    const [countrycode, onChangeCountryCode] = useState('')
+    console.log("Country code is???????????????????????????: ", countrycode);
     console.log("Phone", phone);
+    console.log("********country code**********", c_code)
+    console.log("********number****************", phone)
+    var a = `${c_code || ''}${phone}`;
+    console.log("a value in profile", a);
     const [address, onChangeAddress] = React.useState(
         responses?.address || '',
     );
@@ -53,8 +64,8 @@ const EditProfile = ({ edit,navigation }) => {
     const [state, onChangestate] = React.useState('');
     const [dob, onChangeDob] = React.useState('');
 
-    const {getUserID}=useUser()
-    const userID=getUserID();
+    const { getUserID } = useUser()
+    const userID = getUserID();
 
     const [gender, onChangegender] = useState('')
     const [status, onChangestatus] = useState('')
@@ -71,7 +82,7 @@ const EditProfile = ({ edit,navigation }) => {
     const [isLoading, setLoading] = useState(false);
     const [isPopup, setPopup] = useState(false);
 
-    const [employeeId,setemployeeid]=useState('')
+    const [employeeId, setemployeeid] = useState('')
 
     const isFocused = useIsFocused()
 
@@ -80,11 +91,15 @@ const EditProfile = ({ edit,navigation }) => {
             axios.get(
                 `https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`,
             ).then(res => {
+
+                console.log(res)
                 setresponses(res?.data?.employee)
                 setemployeeid(res?.data?.employee?.id)
                 setdata(res?.data?.employee)
                 onChangeName(res?.data?.employee?.name)
                 onChangePhone(res?.data?.employee?.phone)
+                onChangeCountryCode(res?.data?.employee?.countryCode)
+                console.log("response>>>>>>>>>>>>>>>>>>>>>>>>", res?.data?.employee?.countryCode);
                 // console.log("******////////////////////////*****",res?.data?.employee?.phone);
                 // console.log("Location*******",res?.data?.employee?.Location);
                 onChangeAddress(res?.data?.employee?.Location?.address)
@@ -149,6 +164,9 @@ const EditProfile = ({ edit,navigation }) => {
         if (!validator.isLength(Fullname, 3, 50)) {
             return showError("Form name should be between 3 to 50 alphabets")
         }
+        if (validator.isEmpty(c_code)) {
+            return showError('The country code is required');
+        }
         if (validator.isEmpty(phone)) {
             return showError('The phone number is required');
         }
@@ -176,16 +194,13 @@ const EditProfile = ({ edit,navigation }) => {
         if (!validator.isLength(city, 3, 20)) {
             return showError("City should be between 3 to 20 alphabets")
         }
-        if(validator.isEmpty(country))
-        {
+        if (validator.isEmpty(country)) {
             return showError("Country is required")
         }
-        if(validator.isEmpty(state))
-        {
+        if (validator.isEmpty(state)) {
             return showError("state is required")
         }
-        if(validator.isEmpty(gender))
-        {
+        if (validator.isEmpty(gender)) {
             return showError("Gender is required")
         }
         if (!validator.isNumeric(taxfilenumber)) {
@@ -199,7 +214,7 @@ const EditProfile = ({ edit,navigation }) => {
         }
         if (!validator.isLength(taxfiledeclaration, 3, 20)) {
             return showError("Tax file declaration should be between 3 to 20")
-        } 
+        }
         if (!validator.isNumeric(taxscale)) {
             return showError('Tax scale field should be numeric');
         }
@@ -223,6 +238,8 @@ const EditProfile = ({ edit,navigation }) => {
                     dateOfBirth: dob ? new Date(dob).toISOString() : '',
                     name: Fullname,
                     phone: phone,
+                    telCountryCode: c_code,
+                    countryCode: countrycode,
                     taxFileNumber: taxfilenumber ? taxfilenumber : '',
                     // avatar: image,
                     taxDecFileUrl: taxfiledeclaration ? taxfiledeclaration : '',
@@ -324,18 +341,18 @@ const EditProfile = ({ edit,navigation }) => {
                     //{uri: 'data:image/png;base64,' + image?.base64}
                     />
                     {
-                        edit===true?
-                    <TouchableOpacity
-                        style={{ marginTop: 3, flexDirection: 'row' }}
-                        onPress={() => setPicker(true)}
-                    >
-                        <View style={{ marginTop: 3 }}>
-                            <EvilIcons name="pencil" size={17} color={colors.twoATwoD} />
-                        </View>
-                        <Text style={styles.changeProfileImgText}>
-                            Change Profile Picture
-                        </Text>
-                    </TouchableOpacity>:null
+                        edit === true ?
+                            <TouchableOpacity
+                                style={{ marginTop: 3, flexDirection: 'row' }}
+                                onPress={() => setPicker(true)}
+                            >
+                                <View style={{ marginTop: 3 }}>
+                                    <EvilIcons name="pencil" size={17} color={colors.twoATwoD} />
+                                </View>
+                                <Text style={styles.changeProfileImgText}>
+                                    Change Profile Picture
+                                </Text>
+                            </TouchableOpacity> : null
                     }
                 </View>
                 <View style={{ marginTop: 15 }} />
@@ -348,9 +365,18 @@ const EditProfile = ({ edit,navigation }) => {
                     placeholderTextColor={colors.twoATwoD}
                 />
 
-                <Countryinput disabled={!edit} value={phone} onchange={(number) => {
-                    onChangePhone(number)
-                }}/>
+                {
+                    edit === true ? <Countryinput disabled={!edit} value={phone} defaultCode={responses?.countryCode || ''} onchange={(code, number, coun_code) => {
+                        onChangec_code(code)
+                        onChangePhone(number)
+                        onChangeCountryCode(coun_code)
+                    }} />
+                        :
+                        <Countryinput disabled={!edit} value={phone ? phone : ''} defaultCode={responses?.countryCode} />
+                        // <PhoneInput
+                        //     defaultCode={responses?.countryCode || ""}
+                        // />
+                }
 
                 <TextInput
                     value={address}

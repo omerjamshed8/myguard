@@ -150,7 +150,7 @@ function EditDocument({ route, navigation }) {
                 {/* Input Wrapper */}
                 <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "10%" }}>
                     <View>
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Name</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Document Name</Text>
                         <CustomInput
                             value={names}
                             placeholder="Name"
@@ -158,7 +158,7 @@ function EditDocument({ route, navigation }) {
                             placeholderTextColor={'black'}
                         />
 
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Type</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Document Type</Text>
                         <CustomInput
                             value={entry}
                             placeholder="Licence,cnic,etc"  //pehlay yahan Entry tha 
@@ -175,7 +175,7 @@ function EditDocument({ route, navigation }) {
               placeholderTextColor={'black'}
             /> */}
 
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Expiry Date</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Expiry Date</Text>
                         <DatePick date={date?date:dateconverter(props.Document.expiryDate)} width={"100%"} open={true} calendarbgcolor={"#FFFFFF"} onChange={(date) => {
                             setdate(date)
                         }} />
@@ -186,7 +186,7 @@ function EditDocument({ route, navigation }) {
               placeholderTextColor={'black'}
             /> */}
 
-                        <Text style={{ color: Colors.twoATwoD, fontWeight: '500' }}>Note</Text>
+                        <Text style={{ color: Colors.twoATwoD, fontWeight: '500',marginTop:10 }}>Note</Text>
                         <TextInput
                             value={note}
                             style={styles.inputs}

@@ -7,32 +7,45 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import {DOWN} from '../../assets1/images';
-import CountryPicker from 'react-native-country-picker-modal';
-import {FONTS} from '../../assets1/Style/font';
+import React, { useState, useRef, useEffect } from 'react';
+import { DOWN } from '../../assets1/images';
+import CountryPicker, { CountryCodeList } from 'react-native-country-picker-modal';
+import { FONTS } from '../../assets1/Style/font';
 
-import {PhoneInputState} from 'react-native-phone-number-input';
+import { PhoneInputState } from 'react-native-phone-number-input';
 import PhoneInput from 'react-native-phone-number-input';
-const Countryinput = ({disabled,onchange,value}) => {
-  console.log("value",value)
-  let inputval=value.toString()
-  console.log("Input num in string",inputval);
+const Countryinput = ({ disabled, onchange, value, defaultCode }) => {
+  // console.log("value", value)
+  // console.log("defaultCode", defaultCode)
+  // let inputval=value.toString()
+  // console.log("Input num in string",inputval);
   const phoneInput = useRef(null);
-  console.log(phoneInput);
+  const [myCountryCode, setMyCountryCode] = useState(defaultCode)
+  // console.log(phoneInput);
   useEffect(() => {
-    console.log(phoneInput?.current?.getCallingCode());
+    // console.log(phoneInput?.current?.getCallingCode());
   }, []);
+  useEffect(() => {
+    // console.log(phoneInput?.current?.getCallingCode());
+    console.log('*******************************************************')
+    console.log('changed....', defaultCode)
+    setMyCountryCode(defaultCode)
+    // console.log()
+    console.log('*******************************************************')
+  }, [defaultCode]);
   const [selectedCallingCode, setSelectedCallingCode] = useState('90');
-  const [num,setnum]=useState()
-  const [countrycode,setcountrycode]=useState()
-  console.log("number entered",num)
-  console.log("Country code",countrycode?.callingCode[0])
-  const c_code=countrycode?.callingCode[0]
-  let a=`${c_code}${num}`;
-  console.log("a=",a)
-  if(typeof onchange === 'function') {
-    onchange(a)
+  const [num, setnum] = useState()
+  const [countrycode, setcountrycode] = useState()
+  // console.log("number entered", num)
+  // console.log("Country code", countrycode?.callingCode[0])
+  const c_code = countrycode?.callingCode[0]
+  // console.log("Country Code issssssssssssssssssssssssssssssssss: ", countrycode?.cca2)
+  // const tel_code=countrycode?.countryCode()
+  // console.log("telephone code::::::::::::::::",tel_code)
+  var a = `${c_code}${num}`;
+  // console.log("a=", c_code, num, value)
+  if (typeof onchange === 'function') {
+    onchange(c_code, num, countrycode?.cca2)
   }
   function pressCountry() {
     console.log(PhoneInputState, 'STATE');
@@ -41,13 +54,23 @@ const Countryinput = ({disabled,onchange,value}) => {
 
   function Render() {
     return (
-      <View style={{position: 'absolute', right: -30, zIndex: -1}}>
+      <View style={{ position: 'absolute', right: -30, zIndex: -1 }}>
         <Text></Text>
       </View>
     );
   }
+
+  // const getCountryCode = (value) => {
+  // console.log("=============Country Code=======",value.getCountryCode())
+  // return value.countryCode;
+  // };
+
+  const getCallingCode = (value) => {
+    return value.code;
+  };
+
   return (
-    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <View>
         <Image
           source={DOWN}
@@ -75,11 +98,14 @@ const Countryinput = ({disabled,onchange,value}) => {
             borderWidth: 1,
             borderColor: '#000',
           }}></TouchableOpacity> */}
+          {/* <Text style={{color: 'black'}}>{CountryCodeList.find(i => i === myCountryCode)}</Text> */}
         <PhoneInput
+          ref={phoneInput}
           value={value}
           placeholder={value}
+          defaultCode={CountryCodeList.find(i => i === myCountryCode)}
           disabled={disabled}
-          onChangeText={text=>setnum(text)}
+          onChangeText={text => setnum(text)}
           containerStyle={[
             {
               backgroundColor: '#fff',
@@ -110,7 +136,7 @@ const Countryinput = ({disabled,onchange,value}) => {
             // top: 3,
             // bottom: -5,
             // left: 60,
-            padding:"auto",
+            padding: "auto",
             // marginLeft: 30,
             width: Dimensions.get('screen').width / 2,
             height: 110,
@@ -123,7 +149,8 @@ const Countryinput = ({disabled,onchange,value}) => {
             // right: 0,
             left: 1,
           }}
-          // renderDropdownImage={Render()}
+
+        // renderDropdownImage={Render()}
         />
       </View>
     </View>

@@ -13,7 +13,7 @@ const datas = [
   { label: 'Sharga', value: '5' },
 ];
 
-const Dropdowns = ({ navigation, ph, disable, width, bgcolor, phcolor, initialtype, borderradius, data, onchange }) => {
+const Dropdowns = ({ navigation, ph, disable, width,height, bgcolor, phcolor, initialtype, borderradius, data, onchange }) => {
   const [gender, setGender] = useState('male');
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([
@@ -50,7 +50,7 @@ const Dropdowns = ({ navigation, ph, disable, width, bgcolor, phcolor, initialty
         </View> */}
         <View style={{ width: width }}>
           <Dropdown
-            style={[styles.dropdown, { backgroundColor: bgcolor, borderRadius: borderradius ? borderradius : 10 }]}
+            style={[styles.dropdown, {height:height?height:50, backgroundColor: bgcolor, borderRadius: borderradius ? borderradius : 10 }]}
             placeholderStyle={[styles.placeholderStyle, { color: phcolor ? phcolor : '#000' }]}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}

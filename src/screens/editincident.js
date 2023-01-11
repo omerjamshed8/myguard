@@ -121,6 +121,9 @@ function EditIncident({ route, navigation }) {
   const clickhandler = () => {
     // navigation.navigate('CreateEmployee');
 
+    if (validator.isEmpty(custId)) {
+      return showError("Please select customer name")
+    }
     if (validator.isEmpty(fname)) {
       return showError("Form name is required")
     }
@@ -153,9 +156,9 @@ function EditIncident({ route, navigation }) {
     axios.put(
       `https://securitylinksapi.herokuapp.com/api/v1/admin/incidents/${props.id}`,
       {
-        customerId: props.Customer.id,
+        customerId: custId?custId:props.Customer.id,
         employeeId: props.Employee.id,
-        siteId: props.Site.id,
+        siteId: siteId?siteId:props.Site.id,
         status: "pending",
         formName: fname,
         requiredAction: reqaction,

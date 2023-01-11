@@ -31,7 +31,7 @@ const EmergencyDetails = ({ edit, navigation }) => {
     const { user, getUserID } = useUser();
     const userID = getUserID()
     const [emergencydetails, setemergencydetails] = useState(user?.UserProfile?.emergencydetails);
-    const [emergencynumber, onChangeemergencynumber] = React.useState(user?.UserProfile?.emergencynumber || '');
+    const [emergencynumber, onChangeemergencynumber] = React.useState('');
     const [address, onChangeAddress] = React.useState(
         user?.UserProfile?.address || '',
     );
@@ -69,7 +69,7 @@ const EmergencyDetails = ({ edit, navigation }) => {
             setemployeeid(res?.data?.employee?.id)
             setdata(res?.data?.employee)
             setemergencydetails(res?.data?.employee?.EmployeeHrDetail?.emergencyDetails)
-            onChangeemergencynumber(res?.data?.employee?.phone)
+            onChangeemergencynumber(res?.data?.employee?.EmployeeHrDetail?.emergencyNumber)
             // console.log("Location*******",res?.data?.employee?.Location);
             onChangeAddress(res?.data?.employee?.Location?.address)
             onChangeCity(res?.data?.employee?.Location?.city)

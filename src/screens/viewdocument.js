@@ -67,7 +67,7 @@ function ViewDocument({ route, navigation }) {
                 </View>
                 <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "15%" }}>
                     <View>
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Name</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Document Name</Text>
                         <CustomInput
                             value={names}
                             placeholder="Name"
@@ -76,7 +76,7 @@ function ViewDocument({ route, navigation }) {
                             editable={false}
                         />
 
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Type</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Document Type</Text>
                         <CustomInput
                             value={entry}
                             placeholder="Licence,cnic,etc"  //pehlay yahan Entry tha 
@@ -86,12 +86,12 @@ function ViewDocument({ route, navigation }) {
                             editable={false}
                         />
 
-                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Expiry Date</Text>
+                        <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600',marginTop:10,marginBottom:-10 }}>Expiry Date</Text>
                         <DatePick width={"100%"} date={dateconverter(props?.Document?.expiryDate)} onChange={(date) => {
                             setdate(date)
                         }} />
 
-                        <Text style={{ color: Colors.twoATwoD, fontWeight: '500' }}>Note</Text>
+                        <Text style={{ color: Colors.twoATwoD, fontWeight: '500',marginTop:10 }}>Note</Text>
                         <TextInput
                             value={note}
                             style={styles.inputs}

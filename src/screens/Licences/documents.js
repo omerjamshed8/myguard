@@ -1,6 +1,7 @@
 import { useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import { DocsContext } from "contexts/DocsContext";
+import useUser from "hooks/useUser";
 import React, { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -11,6 +12,9 @@ import fonts from "theme/fonts";
 export default function Document({ navigation }) {
     const [responses, setresponses] = useState('')
     const [data, setdata] = useState()
+
+    const {getUserID}=useUser()
+    const userID=getUserID()
 
     var createdat;
 
@@ -33,24 +37,36 @@ export default function Document({ navigation }) {
         { label: "10", value: '10' },
     ]
 
-    const isFocused=useIsFocused()
+    const isFocused = useIsFocused()
     useEffect(() => {
-        if(isFocused)
-        {
-            axios.get(
-                "https://securitylinksapi.herokuapp.com/api/v1/employee/13/docs",
-            ).then(res => {
-                console.log('successfully get response in documents')
-                console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
-                setresponses(res?.data?.data)
-                setdata(res?.data?.data)
-                docsCtx.setData(res?.data?.data)
-                // createdat=res?.data?.data?.createdAt
-                // expirydate=res?.data?.data?.expiryDate
-            }).catch(e => {
-                console.log('error')
-                console.log(e.response.data)
-            })
+        if (isFocused) {
+            (async () => {
+                let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+                console.log(1)
+                if (employeeResponse.data.employee) {
+                    console.log(2)
+                    let employee = employeeResponse.data.employee
+                    let unavailsResponse = await axios.get(
+                        `https://securitylinksapi.herokuapp.com/api/v1/employee/${employee.id}/docs`,
+                    ).then(res => {
+                        console.log('successfully get response in documents')
+                        console.log("!!!!!!!!!>>>>>>>>>", res.data.data)
+                        setresponses(res?.data?.data)
+                        setdata(res?.data?.data)
+                        docsCtx.setData(res?.data?.data)
+                        // createdat=res?.data?.data?.createdAt
+                        // expirydate=res?.data?.data?.expiryDate
+                    }).catch(e => {
+                        console.log('error')
+                        console.log(e.response.data)
+                    })
+                }
+                else {
+                    console.log(3)
+                }
+                console.log(4)
+            })()
+
         }
     }, [isFocused])
     const Card = () => {
@@ -63,7 +79,7 @@ export default function Document({ navigation }) {
     const dateconverter = (date) => {
         createdat = new Date(date)
         var month = createdat.toLocaleString('default', { month: 'short' });
-        newdate=createdat.getFullYear() + ' ' + month + ' ' + createdat.getDate()          //createdat.getMonth() + 1
+        newdate = createdat.getFullYear() + ' ' + month + ' ' + createdat.getDate()          //createdat.getMonth() + 1
         return newdate
     }
 
@@ -81,22 +97,20 @@ export default function Document({ navigation }) {
                                         {'\n'}
                                         {item?.Document?.type}
                                     </Text>
-                                    <Text style={{ color: '#2A2D43',fontSize: 14, fontFamily: fonts.Poppins.Medium }}>
+                                    <Text style={{ color: '#2A2D43', fontSize: 14, fontFamily: fonts.Poppins.Medium }}>
                                         {'\n'}
                                         Date Added: {dateconverter(item?.Document?.createdAt)}    {'\n'}
                                         Date Expire: {dateconverter(item?.Document?.expiryDate)}
-                                        {'\n'}
                                     </Text>
-                                    <View style={{flexDirection:"row"}}>
-                                        <Text style={{ color: '#2A2D43', fontFamily: 'Poppins', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular}}>
-                                            Renewal Period
+                                    <View style={{ display: "flex", flex: 1, flexDirection: "row" }}>
+                                        <Text style={{ color: '#2A2D43', fontFamily: 'Poppins', fontStyle: 'italic', fontFamily: fonts.Poppins.Regular }}>
+                                            Renewal Period  <Dropdowns data={datas} ph={item?.renewalPeriod} disable={true} height={20} width={60} borderradius={4} />
                                         </Text>
-                                        <Dropdowns data={datas} disable={true}/>
                                     </View>
                                     {/* <View> */}
                                     {/* </View> */}
                                 </Text>
-                                <View style={{ flexDirection: 'row',padding:4 }}>
+                                <View style={{ flexDirection: 'row', padding: 4 }}>
                                     <TouchableOpacity onPress={() => {
                                         navigation.navigate('ViewDocument', {
                                             props: item

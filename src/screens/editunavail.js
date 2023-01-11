@@ -194,10 +194,10 @@ const EditUnavail = ({ route,navigation }) => {
                     <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginLeft: '35%' }}>End Date</Text>
                 </View>
                 <View style={styles.postalCodeWrapper}>
-                    <DatePick width={"90%"} fontsize={12} open={true} date={startdate?startdate:props?.startDate} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12}calendarbgcolor={"#FFFFFF"} open={true} date={startdate?startdate:props?.startDate} onChange={date => {
                         onChangestartdate(date)
                     }} />
-                    <DatePick width={"90%"} fontsize={12} date={enddate?enddate:props?.endDate} open={true} onChange={date => {
+                    <DatePick width={"90%"} fontsize={12} calendarbgcolor={"#FFFFFF"} date={enddate?enddate:props?.endDate} open={true} onChange={date => {
                         onChangeenddate(date)
                     }} />
                 </View>

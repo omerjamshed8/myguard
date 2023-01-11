@@ -30,23 +30,23 @@ import useUser from 'hooks/useUser';
 
 function AddDocument({ navigation }) {
 
-  const {getUserID}=useUser()
-  const userID=getUserID()
+  const { getUserID } = useUser()
+  const userID = getUserID()
   useEffect(() => {
     // setfile([])
     // setpressed(false)
-      (async () => {
-          let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
-          console.log(1)
-          if (employeeResponse.data.employee) {
-              console.log(2)
-              let employee = employeeResponse.data.employee
-              setemployeeid(employee.id)
-          } else {
-              console.log(3)
-          }
-          console.log(4)
-      })()
+    (async () => {
+      let employeeResponse = await axios.get(`https://securitylinksapi.herokuapp.com/api/v1/employee/profile/${userID}`)
+      console.log(1)
+      if (employeeResponse.data.employee) {
+        console.log(2)
+        let employee = employeeResponse.data.employee
+        setemployeeid(employee.id)
+      } else {
+        console.log(3)
+      }
+      console.log(4)
+    })()
   }, [])
 
   const [text, onChangeText] = React.useState('Full Name');
@@ -63,7 +63,7 @@ function AddDocument({ navigation }) {
   const [date, setdate] = useState('')
   const [isPopup, setPopup] = useState(false);
   const [succed, setsucceed] = useState(false);
-  const [empId,setemployeeid]=useState('')
+  const [empId, setemployeeid] = useState('')
 
   const docsCtx = useContext(DocsContext);
 
@@ -82,7 +82,7 @@ function AddDocument({ navigation }) {
       console.log("in validator")
       return showError('Document name is required');
     }
-    else if (!validator.isAlpha(names,'en-US',{ignore:' '})) {
+    else if (!validator.isAlpha(names, 'en-US', { ignore: ' ' })) {
       return showError("Title should be in alphabets")
     }
     else if (!validator.isLength(names, 3, 20)) {
@@ -91,7 +91,7 @@ function AddDocument({ navigation }) {
     else if (validator.isEmpty(entry)) {
       return showError("Document type is required")
     }
-    else if (!validator.isAlpha(entry,'en-US',{ignore:' '})) {
+    else if (!validator.isAlpha(entry, 'en-US', { ignore: ' ' })) {
       return showError("Type should be in alphabets")
     }
     else if (!validator.isLength(entry, 3, 20)) {
@@ -177,6 +177,8 @@ function AddDocument({ navigation }) {
     }
   }
 
+  console.log("Document context:::::::",docsCtx);
+
   const handleUpload = async () => {
     try {
       const res = await DocumentPicker.pickMultiple({
@@ -212,7 +214,7 @@ function AddDocument({ navigation }) {
         {/* Input Wrapper */}
         <View style={{ flex: 1, paddingHorizontal: 30, marginTop: "10%" }}>
           <View>
-            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Name</Text>
+            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600', marginTop: 10, marginBottom: -10 }}>Document Name</Text>
             <CustomInput
               value={names}
               placeholder="Name"
@@ -220,7 +222,7 @@ function AddDocument({ navigation }) {
               placeholderTextColor={'black'}
             />
 
-            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Document Type</Text>
+            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600', marginTop: 10, marginBottom: -10 }}>Document Type</Text>
             <CustomInput
               value={entry}
               placeholder="Licence,cnic,etc"  //pehlay yahan Entry tha 
@@ -237,7 +239,7 @@ function AddDocument({ navigation }) {
               placeholderTextColor={'black'}
             /> */}
 
-            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600' }}>Expiry Date</Text>
+            <Text style={{ color: '#2A2D43', fontSize: 12, fontWeight: '600', marginTop: 10, marginBottom: -10 }}>Expiry Date</Text>
             <DatePick width={"100%"} open={true} calendarbgcolor={"#FFFFFF"} onChange={(date) => {
               setdate(date)
             }} />
@@ -248,7 +250,7 @@ function AddDocument({ navigation }) {
               placeholderTextColor={'black'}
             /> */}
 
-            <Text style={{ color: Colors.twoATwoD, fontWeight: '500' }}>Note</Text>
+            <Text style={{ color: Colors.twoATwoD, fontWeight: '500', marginTop: 10 }}>Note</Text>
             <TextInput
               style={styles.inputs}
               placeholder="Type here..."
@@ -269,15 +271,15 @@ function AddDocument({ navigation }) {
 
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "center",marginTop:20 }}>
-        {
-          file ? file.map((item, index) => (
-              <View key={index} style={{paddingHorizontal:10,alignItems:"center"}} >
+        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 20 }}>
+          {
+            file ? file.map((item, index) => (
+              <View key={index} style={{ paddingHorizontal: 10, alignItems: "center" }} >
                 <Image source={require('../assets1/images/PDF.png')} style={{ height: 60, width: 40 }} />
-                <Text style={{ color: 'black',textAlign:"center" }}>{file[index].name}</Text>
+                <Text style={{ color: 'black', textAlign: "center" }}>{file[index].name}</Text>
               </View>
-          )) : null
-        }
+            )) : null
+          }
         </View>
 
         {
